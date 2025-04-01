@@ -10,7 +10,7 @@ import { Component, signal } from '@angular/core';
       </a>
     </div>
 
-    <h2 class="font-bold hover:font-normal">Analog</h2>
+    <h2 class="font-bold hover:opacity-70">Analog</h2>
 
     <h3 class="hover:underline">The fullstack meta-framework for Angular!</h3>
 
