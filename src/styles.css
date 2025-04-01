@@ -1,89 +1,269 @@
-/* Tailwind directives  */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* You can add global styles to this file, and also import other style files */
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.card {
-  padding: 2em;
-}
-
-.logo {
-  @apply box-content;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --background: #FFFFFF;
+    --foreground: #EA3680;
+    --card: #FFFFFF;
+    --card-foreground: #EA3680;
+    --popover: #FFFFFF;
+    --popover-foreground: #EA3680;
+    --primary: #EA3680;
+    --primary-foreground: #F2F5C1;
+    --secondary: #F6F7B8;
+    --secondary-foreground: #3F1C1B;
+    --muted: #F6F7B8;
+    --muted-foreground: #9E7C5E;
+    --accent: #F6F7B8;
+    --accent-foreground: #0a0a0a;
+    --destructive: #FF6A00;
+    --destructive-foreground: #F2F5C1;
+    --border: #D9B6A5;
+    --input: #D9B6A5;
+    --ring: #EA3680;
+    --chart-1: #FF5A33;
+    --chart-2: #009E6C;
+    --chart-3: #005A6F;
+    --chart-4: #E6942D;
+    --chart-5: #FF8B32;
+    --radius: 0.5rem;
   }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
+  .dark {
+    --background: #0a0a0a;
+    --foreground: #EA3680;
+    --card: #0a0a0a;
+    --card-foreground: #EA3680;
+    --popover: #0a0a0a;
+    --popover-foreground: #ffffff;
+    --primary: #EA3680;
+    --primary-foreground: #3F1C1B;
+    --secondary: #5A2B2A;
+    --secondary-foreground: #EA3680;
+    --muted: #5A2B2A;
+    --muted-foreground: #ffffff;
+    --accent: #5A2B2A;
+    --accent-foreground: #ffffff;
+    --destructive: #FF6A00;
+    --destructive-foreground: #EA3680;
+    --border: #EA3680;
+    --input: #5A2B2A;
+    --ring: #EA3680;
+    --chart-1: #3F9C1D;
+    --chart-2: #A7D8AC;
+    --chart-3: #C4E6FF;
+    --chart-4: #F5C6B3;
+    --chart-5: #F5A2A2;
+    --radius: 0.5rem;
   }
 }
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* --------------------------------------------- Begin scrollbar stilyng -------------------------------------------------------------- */
+html {
+  overflow-y: scroll; /* Keeps scrollbar space reserved */
+}
+
+html::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Scrollbar track */
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Scrollbar thumb (the draggable part) */
+html::-webkit-scrollbar-thumb {
+  background: rgba(234, 54, 128, 0.5);;
+  border-radius: 3px;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(234, 54, 128, 0.8);;
+  border-radius: 3px;
+}
+
+
+/* Up Arrow (▲) */
+html::-webkit-scrollbar-button:single-button:decrement {
+  display: block;
+  height: 10px;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><polygon points='12,4 4,16 20,16' fill='rgba(234, 54, 128, 0.8)'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px;
+}
+
+/* Down Arrow (▼) */
+html::-webkit-scrollbar-button:single-button:increment {
+  display: block;
+  height: 10px;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><polygon points='4,8 20,8 12,20' fill='rgba(234, 54, 128, 0.8)'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px;  
+}
+/* --------------------------------------------- End scrollbar stilyng -------------------------------------------------------------- */
+
+
+/* Highlithgt background and text colour */
+::selection {
+  background-color: rgba(234, 54, 128, 0.5);
+  color: white;
+}
+
+/* caret (cursor) color */
+input {
+  caret-color: lightskyblue;
+}
+
+/* checkbox background color */
+input[type="checkbox"] {
+  accent-color: #EA3680; /* Applies only when checked */
+}
+input[type="checkbox"]:not(:checked) {
+  opacity: 0.3; /* Makes the background appear transparent */
+} 
+input[type="checkbox"]:not(:checked):hover {
+  opacity: 0.5;
+}
+/* Ensure checked background is pink */
+input[type="checkbox"]:checked {
+opacity: 1;
+}
+
+/* radiobox background color */
+input[type="radio"] {
+  accent-color: #EA3680; /* Applies only when checked */
+}
+input[type="radio"]:not(:checked) {
+  opacity: 0.3; /* Makes the background appear transparent */
+} 
+input[type="radio"]:not(:checked):hover {
+  opacity: 0.5;
+}
+/* Ensure checked background is pink */
+input[type="radio"]:checked {
+opacity: 1;
+}
+
+
+::placeholder {
+  color: #757575 !important;
+  opacity: 1 !important;
+}
+
+/* Remove the clear button from search */
+input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}
+
+.hover\:underline:hover {
+  text-decoration-line: underline;
+  text-decoration-color: var(--primary);
+}
+
+.checked\:bg-\[var\(--primary\)\]:checked {
+  background-color: var(--primary);
+}
+
+
+/* Transition line left-to-right */
+.underlined {
+  display: inline-block;
+  padding-bottom: 10px;
+  background-image: linear-gradient(#EA3680 0 0);
+  background-position: 0 100%; /*OR bottom left*/
+  background-size: 0% 4px;
+  background-repeat: no-repeat;
+  transition:
+    background-size 0.3s,
+    background-position 0s 0.3s; /*change after the size immediately*/
+  &:hover {
+    color: var(--primary);
+    background-position: 100% 100%; /*OR bottom right*/
+    background-size: 100% 4px;
+  }
+}
+
+
+/* Display product list */
+/* NOT CURRENTLY USED */
+.product-box {
+  transition: transform 300ms ease; /* Apply transition to transform (scale) */ 
+  box-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  --tw-ring-color: var(--primary); 
+  &:hover {
+    transition-duration: 300ms;
+    box-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color), 
+                0 0 6px 6px rgba(234, 54, 128, 0.8);
+    --tw-ring-color: var(--primary);  /* Define the ring color */ 
+  }
+}
+
+
+/* Pink shadows throughout the website */
+.pink-shadow {
+  box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color), 
+              0 0 8px 8px rgba(234, 54, 128, 0.5);
+  --tw-ring-color: var(--primary);
+  &:hover {
+    transition-duration: 300ms;
+    box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color), 
+                0 0 8px 8px rgba(234, 54, 128, 0.8);
+    --tw-ring-color: var(--primary);  /* Define the ring color */ 
+  }  
+}
+
+/* Navbar shadow. HANDLE CAREFULLY */
+.navbar-shadow {
+  position: fixed;
+  width: 100%;
+  box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color),
+              0 8px 8px rgba(234, 54, 128, 0.5); /* Bottom-only shadow */
+  --tw-ring-color: var(--primary);
+  &:hover {
+    transition: 300ms;
+    box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color),
+                0 8px 8px rgba(234, 54, 128, 0.8); /* Increased intensity on hover */
+  }
+}
+
+
+/* Searchbar shadow */
+.search-shadow {
+  box-shadow: 0 0 6px 6px rgba(234, 54, 128, 0.5);
+  --tw-ring-color: var(--primary);
+  transition: all 300ms ease;  /*transistion used in parent class works like this for all the children*/ 
+  &:hover {
+    box-shadow: 0 0 6px 6px rgba(234, 54, 128, 0.8);
+    --tw-ring-color: var(--primary);  /* Define the ring color */ 
+  }
+  &:focus {
+    box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color), 
+                0 0 6px 6px rgba(234, 54, 128, 0.8);
+    --tw-ring-color: var(--primary);  /* Define the ring color */ 
+    border: none;
+    outline: none;
+  }  
+}
+
+
+/* COLOUR SCHEMES */
+/* <color name="black">#FF000000</color>
+<color name="white">#FFFFFFFF</color>
+<color name="pink">#EA3680</color>
+<color name="pink100">#ff80ab</color>
+<color name="grey600">#757575</color>
+<color name="pink900">#880e4f</color> shadow colour rgba(136, 14, 79, 1)
+<color name="lightblue200">#40c4ff</color> */
