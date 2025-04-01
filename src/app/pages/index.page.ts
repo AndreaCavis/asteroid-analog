@@ -4,18 +4,24 @@ import { Component, signal } from '@angular/core';
   selector: 'app-home',
   standalone: true,
   template: `
-    <div>
+    <!-- <div>
       <a href="https://analogjs.org/" target="_blank">
         <img alt="Analog Logo" class="logo analog" src="/analog.svg" />
       </a>
-    </div>
+    </div> -->
 
     <h2 class="font-bold hover:opacity-70">Analog</h2>
 
     <h3 class="hover:underline">The fullstack meta-framework for Angular!</h3>
 
     <div class="card">
-      <button type="button" (click)="increment()" class="hover:bg-black hover:text-red-600">Count {{ count() }}</button>
+      <button
+        type="button"
+        (click)="increment()"
+        class="hover:bg-black hover:text-red-600"
+      >
+        Count {{ count() }}
+      </button>
     </div>
 
     <p class="read-the-docs">
