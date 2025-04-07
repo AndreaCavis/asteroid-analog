@@ -15,6 +15,7 @@
     --popover: #ffffff;
     --popover-foreground: #ea3680;
     --primary: #ea3680;
+    --primary-light: #ff80ab;
     --primary-foreground: #f2f5c1;
     --secondary: #f6f7b8;
     --secondary-foreground: #3f1c1b;
@@ -42,6 +43,7 @@
     --popover: #0a0a0a;
     --popover-foreground: #ffffff;
     --primary: #ea3680;
+    --primary-light: #ff80ab;
     --primary-foreground: #3f1c1b;
     --secondary: #5a2b2a;
     --secondary-foreground: #ea3680;
@@ -61,7 +63,9 @@
     --chart-5: #f5a2a2;
     --radius: 0.5rem;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
@@ -70,28 +74,31 @@
   }
 }
 
+/* --------------------------------------------- Begin scrollbar stilyng -------------------------------------------------------------- */
 html {
-  overflow-y: scroll;
+  overflow-y: scroll; /* Keeps scrollbar space reserved */
 }
 
 html::-webkit-scrollbar {
   width: 7px;
 }
 
+/* Scrollbar track */
 html::-webkit-scrollbar-track {
   background: transparent;
 }
 
+/* Scrollbar thumb (the draggable part) */
 html::-webkit-scrollbar-thumb {
   background: rgba(234, 54, 128, 0.5);
   border-radius: 3px;
 }
-
 html::-webkit-scrollbar-thumb:hover {
   background: rgba(234, 54, 128, 0.8);
   border-radius: 3px;
 }
 
+/* Up Arrow (▲) */
 html::-webkit-scrollbar-button:single-button:decrement {
   display: block;
   height: 10px;
@@ -101,6 +108,7 @@ html::-webkit-scrollbar-button:single-button:decrement {
   background-size: 10px;
 }
 
+/* Down Arrow (▼) */
 html::-webkit-scrollbar-button:single-button:increment {
   display: block;
   height: 10px;
@@ -109,12 +117,15 @@ html::-webkit-scrollbar-button:single-button:increment {
   background-position: center;
   background-size: 10px;
 }
+/* --------------------------------------------- End scrollbar stilyng -------------------------------------------------------------- */
 
+/* Highlithgt background and text colour */
 ::selection {
   background-color: rgba(234, 54, 128, 0.5);
   color: white;
 }
 
+/* caret (cursor) color */
 input {
   caret-color: lightskyblue;
 }
@@ -127,6 +138,7 @@ input[type="checkbox"]:not(:checked) {
   opacity: 0.3; /* Makes the background appear transparent */
 }
 input[type="checkbox"]:not(:checked):hover {
+  transition: all 500ms;
   opacity: 0.5;
 }
 /* Ensure checked background is pink */
@@ -134,15 +146,18 @@ input[type="checkbox"]:checked {
   opacity: 1;
 }
 
+/* radiobox background color */
 input[type="radio"] {
-  accent-color: #ea3680;
+  accent-color: #ea3680; /* Applies only when checked */
 }
 input[type="radio"]:not(:checked) {
-  opacity: 0.3;
+  opacity: 0.3; /* Makes the background appear transparent */
 }
 input[type="radio"]:not(:checked):hover {
+  transition: all 500ms;
   opacity: 0.5;
 }
+/* Ensure checked background is pink */
 input[type="radio"]:checked {
   opacity: 1;
 }
@@ -152,6 +167,7 @@ input[type="radio"]:checked {
   opacity: 1 !important;
 }
 
+/* Remove the clear button from search */
 input[type="search"]::-webkit-search-cancel-button {
   display: none;
 }
@@ -161,47 +177,65 @@ input[type="search"]::-webkit-search-cancel-button {
   text-decoration-color: var(--primary);
 }
 
-.checked\:bg-\[var\(--primary\)\]\:checked {
+.checked\:bg-\[var\(--primary\)\]:checked {
   background-color: var(--primary);
 }
 
+/* Transition line left-to-right */
 .underlined {
   display: inline-block;
   padding-bottom: 10px;
   background-image: linear-gradient(#ea3680 0 0);
-  background-position: 0 100%;
+  background-position: 0 100%; /*OR bottom left*/
   background-size: 0% 4px;
   background-repeat: no-repeat;
-  transition: background-size 0.3s, background-position 0s 0.3s;
+  transition: background-size 0.3s, background-position 0s 0.3s; /*change after the size immediately*/
   &:hover {
     color: var(--primary);
-    background-position: 100% 100%;
+    background-position: 100% 100%; /*OR bottom right*/
     background-size: 100% 4px;
   }
 }
 
+/* Pink shadows throughout the website */
 .pink-shadow {
   box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width))
       var(--tw-ring-color),
     0 0 8px 8px rgba(234, 54, 128, 0.5);
   --tw-ring-color: var(--primary);
   &:hover {
-    transition-duration: 300ms;
+    transition: all 300ms;
     box-shadow: var(--tw-ring-inset) 0 0 0
         calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color),
       0 0 8px 8px rgba(234, 54, 128, 0.8);
-    --tw-ring-color: var(--primary);
+    --tw-ring-color: var(--primary); /* Define the ring color */
   }
 }
 
+.navbar-shadow-old {
+  position: fixed;
+  width: 100%;
+  box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width))
+      var(--tw-ring-color),
+    0 8px 8px rgba(234, 54, 128, 0.5); /* Bottom-only shadow */
+  --tw-ring-color: var(--primary);
+  &:hover {
+    transition: 300ms;
+    box-shadow: var(--tw-ring-inset) 0 0 0
+        calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color),
+      0 8px 8px rgba(234, 54, 128, 0.8); /* Increased intensity on hover */
+  }
+  z-index: 50;
+}
+
 /* Navbar style and bottom background */
-.navbar-shadow {
+.navbar {
   position: fixed;
   width: 100%;
   z-index: 50;
 }
 /*bottom line gradient*/
-.navbar-shadow::after {
+.navbar::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -212,20 +246,34 @@ input[type="search"]::-webkit-search-cancel-button {
   pointer-events: none;
 }
 
+/* Searchbar shadow */
 .search-shadow {
-  box-shadow: 0 0 6px 6px rgba(234, 54, 128, 0.5);
+  box-shadow: 0 0 16px 16px rgba(234, 54, 128, 0.2),
+    0 0 11px 11px rgba(234, 54, 128, 0.2), 0 0 6px 6px rgba(234, 54, 128, 0.3);
   --tw-ring-color: var(--primary);
-  transition: all 300ms ease;
+  transition: all 300ms ease; /*transistion used in parent class works like this for all the children*/
   &:hover {
-    box-shadow: 0 0 6px 6px rgba(234, 54, 128, 0.8);
-    --tw-ring-color: var(--primary);
+    box-shadow: 0 0 16px 16px rgba(234, 54, 128, 0.2),
+      0 0 8px 8px rgba(234, 54, 128, 0.4), 0 0 3px 3px rgba(234, 54, 128, 0.8);
+    --tw-ring-color: var(--primary); /* Define the ring color */
   }
   &:focus {
     box-shadow: var(--tw-ring-inset) 0 0 0
         calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color),
-      0 0 6px 6px rgba(234, 54, 128, 0.8);
-    --tw-ring-color: var(--primary);
+      0 0 16px 16px rgba(234, 54, 128, 0.2),
+      0 0 11px 11px rgba(234, 54, 128, 0.2), 0 0 6px 6px rgba(234, 54, 128, 0.3);
+    --tw-ring-color: var(--primary); /* Define the ring color */
     border: none;
     outline: none;
   }
 }
+
+/* COLOUR SCHEMES */
+/* <color name="black">#FF000000</color>
+<color name="white">#FFFFFFFF</color>
+<color name="pink">#EA3680</color>
+<color name="pink100">#ff80ab</color>
+<color name="pink500">#fb64b6</color>
+<color name="grey600">#757575</color>
+<color name="pink900">#880e4f</color> shadow colour rgba(136, 14, 79, 1)
+<color name="lightblue200">#40c4ff</color> */
