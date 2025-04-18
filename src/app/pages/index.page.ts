@@ -32,7 +32,7 @@ import { SearchbarComponent } from '../components/searchbar/searchbar.component'
       </div>
 
       <div class="flex justify-center">
-        <app-searchbar />
+        <app-searchbar class="w-1/2" />
       </div>
 
       <div

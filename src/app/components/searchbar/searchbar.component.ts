@@ -18,52 +18,57 @@ import { debounce } from '../../utils/debounce';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <form (submit)="onSubmit($event)" class="relative w-full max-w-md">
-      <!-- Search Input -->
-      <input
-        #searchInput
-        type="search"
-        class="w-full border bg-transparent border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Search for supplements..."
-        [(ngModel)]="searchValue"
-        name="search"
-        (input)="onInputChange($event)"
-        (keydown)="onKeyDown($event)"
-        (blur)="onBlur()"
-        aria-autocomplete="list"
-        role="combobox"
-        aria-label="Search supplements"
-      />
+    <div class="flex justify-center w-full">
+      <form (submit)="onSubmit($event)" class="flex-none relative w-full">
+        <!-- Search Input -->
+        <input
+          #searchInput
+          type="search"
+          class="search-shadow w-full my-8 p-3 rounded-full bg-transparent text-accent-foreground"
+          placeholder="Search for supplements..."
+          [(ngModel)]="searchValue"
+          name="search"
+          (input)="onInputChange($event)"
+          (keydown)="onKeyDown($event)"
+          (blur)="onBlur()"
+          aria-autocomplete="list"
+          role="combobox"
+          aria-label="Search supplements"
+        />
 
-      <!-- Search Icon -->
-      <button
-        class="absolute right-0 top-1/2 -translate-y-1/2 p-3 rounded-full"
-        (click)="onSubmit($event)"
-        aria-label="Search supplements"
-      >
-        <i class="pi pi-search text-xl text-white hover:text-primary"></i>
-      </button>
+        <!-- Search Icon -->
+        <button
+          class="absolute right-0 top-1/2 -translate-y-1/2 p-3 rounded-full"
+          (click)="onSubmit($event)"
+          aria-label="Search supplements"
+        >
+          <i
+            class="pi pi-search transition-all duration-300 absolute right-0 text-2xl text-primary opacity-75 hover:opacity-100 top-1/2 -translate-y-1/2 p-3 rounded-full"
+          ></i>
+        </button>
 
-      <!-- Suggestions Dropdown -->
-      <div
-        *ngIf="activeSearch().length > 0"
-        class="absolute top-full z-50 mt-1 w-full rounded-md bg-white shadow-lg border border-blue-500"
-        role="listbox"
-      >
-        <ul class="max-h-60 overflow-auto py-1 text-sm text-gray-800">
-          <li
-            *ngFor="let item of activeSearch(); let i = index"
-            [class.bg-blue-100]="i === selectedIndex()"
+        <!-- Suggestions Dropdown -->
+        @if (activeSearch().length > 0) {
+        <div
+          class="absolute z-50 top-24 bg-black rounded-md text-accent-foreground w-full flex flex-col gap-2"
+          role="listbox"
+        >
+          @for (item of activeSearch(); track item; let i = $index ) {
+          <span
+            class="hover:bg-stone-800 rounded-md pl-4"
+            [class.bg-stone-800.rounded-md.pl-4]="i === selectedIndex()"
             (click)="handleSuggestionClick(item)"
             (mouseenter)="selectedIndex.set(i)"
             role="option"
             [attr.aria-selected]="i === selectedIndex()"
           >
             <span [innerHTML]="highlightMatch(item, searchValue())"></span>
-          </li>
-        </ul>
-      </div>
-    </form>
+          </span>
+          }
+        </div>
+        }
+      </form>
+    </div>
   `,
 })
 export class SearchbarComponent implements OnInit {
