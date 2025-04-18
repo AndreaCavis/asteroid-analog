@@ -8,13 +8,17 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <nav
-      class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/70 to-transparent px-6 py-4"
+      class="navbar max-h-24 backdrop-blur-sm bg-gradient-to-b from-black/60 via-black/40 to-black/60
+     hover:bg-black/90 transition-all duration-200"
     >
-      <a
-        routerLink="/"
-        class="text-white font-bold text-2xl hover:opacity-75 transition-opacity w-1/6 block"
-      >
-        🪐 Asteroid
+      <a routerLink="/">
+        <img
+          src="/asteroid-pink.png"
+          alt="Asteroid logo"
+          width="334"
+          height="100"
+          class="w-1/6 h-auto m-2 inline-block duration-200 hover:animate-pulse"
+        />
       </a>
     </nav>
   `,
