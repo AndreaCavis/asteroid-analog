@@ -12,9 +12,6 @@ import { SearchbarComponent } from '../components/searchbar/searchbar.component'
   standalone: true,
   selector: 'app-home',
   imports: [
-    NgIf,
-    NgFor,
-    RouterLink,
     ProductCardComponent,
     ProductCardSkeletonComponent,
     EmptyStateComponent,
@@ -31,27 +28,14 @@ import { SearchbarComponent } from '../components/searchbar/searchbar.component'
       </div>
 
       <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <ng-container *ngIf="showSkeletons(); else showProducts">
-          <app-product-card-skeleton
-            *ngFor="let s of skeletons"
-          ></app-product-card-skeleton>
-        </ng-container>
-
-        <ng-template #showProducts>
-          <ng-container *ngIf="!isEmpty(); else empty">
-            <app-product-card
-              *ngFor="let product of products()"
-              [product]="product"
-              [routerLink]="['/products', product.id]"
-              class="cursor-pointer hover:shadow-lg transition-shadow"
-            />
-          </ng-container>
-        </ng-template>
-      </div>
-
-      <ng-template #empty>
+        @if (showSkeletons()) { @for (s of skeletons; track s) {
+        <app-product-card-skeleton />
+        } } @else if (!isEmpty()) { @for (product of products(); track
+        product.id) {
+        <app-product-card [product]="product" />} } @else {
         <app-empty-state [name]="" />
-      </ng-template>
+        }
+      </div>
     </div>
   `,
 })
