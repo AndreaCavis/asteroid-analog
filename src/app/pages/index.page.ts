@@ -43,7 +43,7 @@ import { SearchbarComponent } from '../components/searchbar/searchbar.component'
         } } @else if (!isEmpty()) { @for (product of products(); track
         product.id) {
         <app-product-card [product]="product" />} } @else {
-        <app-empty-state [name]="" />
+        <app-empty-state [name]="" class="col-span-full" />
         }
       </div>
     </main>

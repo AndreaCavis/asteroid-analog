@@ -2,31 +2,38 @@
 
 import { Component, Input } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideCircleX } from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-empty-state',
   standalone: true,
-  imports: [NgIf, NgIconComponent],
-  providers: [provideIcons({ lucideCircleX })],
   template: `
     <div
-      class="flex flex-col items-center justify-center w-full text-center gap-2 py-8"
+      class="relative flex flex-col mx-auto col-span-full p-12 lg:h-80 md:h-64 sm:h-60 h-52 w-3/4 bg-stone-900 rounded-md items-center justify-center"
     >
-      <ng-icon name="lucideCircleX" class="text-red-600 w-10 h-10" />
-      <h3 class="font-semibold text-lg">No products found</h3>
+      <i
+        class="pi pi-times-circle p-2 text-red-600 lg:text-5xl md:text-2xl sm:text-xl text-lg"
+      ></i>
 
-      <p class="text-sm text-gray-500">
-        <ng-container *ngIf="name; else noQuery">
-          We found no search results for
-          <span class="text-primary font-medium">“{{ name }}”</span>.
-        </ng-container>
+      <h3
+        class="p-2 font-semibold text-accent-foreground lg:text-2xl md:text-lg sm:text-base text-sm"
+      >
+        No products found
+      </h3>
 
-        <ng-template #noQuery>
-          We found no search results for these filters.
-        </ng-template>
+      @if(name) {
+      <p
+        class="text-stone-400 lg:text-lg md:text-base sm:text-sm text-xs text-center"
+      >
+        We found no search results for
+        <span class="text-primary">“{{ name }}”</span>.
       </p>
+      } @else {
+      <p
+        class="text-stone-400 lg:text-lg md:text-base sm:text-sm text-xs text-center"
+      >
+        We found no search results for these filters.
+      </p>
+      }
     </div>
   `,
 })

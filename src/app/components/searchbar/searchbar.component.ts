@@ -12,14 +12,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { debounce } from '../../utils/debounce';
-import { NgIconsModule, provideIcons } from '@ng-icons/core';
-import { lucideSearch } from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-searchbar',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIconsModule],
-  providers: [provideIcons({ lucideSearch })],
+  imports: [CommonModule, FormsModule],
   template: `
     <form (submit)="onSubmit($event)" class="relative w-full max-w-md">
       <!-- Search Input -->
@@ -44,10 +41,7 @@ import { lucideSearch } from '@ng-icons/lucide';
         (click)="onSubmit($event)"
         aria-label="Search supplements"
       >
-        <ng-icon
-          name="lucideSearch"
-          class="w-5 h-5 text-current hover:text-primary"
-        />
+        <i class="pi pi-search text-xl text-white hover:text-primary"></i>
       </button>
 
       <!-- Suggestions Dropdown -->
