@@ -1,0 +1,113 @@
+<!-- src\app\components\sidebar\sidebar.component.html -->
+
+<div class="sidebar">
+  <p-accordion [multiple]="true" [value]="['type', 'brand', 'price']">
+    <!-- Sort -->
+    <p-accordion-panel value="sort">
+      <p-accordion-header>Sort</p-accordion-header>
+      <p-accordion-content>
+        <div *ngFor="let option of sortOptions" class="filter-option">
+          <input
+            type="radio"
+            [id]="option.value"
+            [name]="'sort'"
+            [value]="option.value"
+            [checked]="filter().sort === option.value"
+            (change)="applySort(option.value)"
+          />
+          <label [for]="option.value">{{ option.label }}</label>
+        </div>
+      </p-accordion-content>
+    </p-accordion-panel>
+
+    <!-- Type -->
+    <p-accordion-panel value="type">
+      <p-accordion-header>Supplement</p-accordion-header>
+      <p-accordion-content>
+        <div *ngFor="let option of typeOptions" class="filter-option">
+          <input
+            type="checkbox"
+            [id]="option.value"
+            [checked]="filter().type.includes(option.value)"
+            (change)="applyArrayFilter('type', option.value)"
+          />
+          <label [for]="option.value">{{ option.label }}</label>
+        </div>
+      </p-accordion-content>
+    </p-accordion-panel>
+
+    <!-- Brand -->
+    <p-accordion-panel value="brand">
+      <p-accordion-header>Brand</p-accordion-header>
+      <p-accordion-content>
+        <div *ngFor="let option of brandOptions" class="filter-option">
+          <input
+            type="checkbox"
+            [id]="option.value"
+            [checked]="filter().brand.includes(option.value)"
+            (change)="applyArrayFilter('brand', option.value)"
+          />
+          <label [for]="option.value">{{ option.label }}</label>
+        </div>
+      </p-accordion-content>
+    </p-accordion-panel>
+
+    <!-- Price -->
+    <p-accordion-panel value="price">
+      <p-accordion-header>Price</p-accordion-header>
+      <p-accordion-content>
+        <div *ngFor="let option of priceOptions" class="filter-option">
+          <input
+            type="radio"
+            [id]="'price-' + option.value.join('-')"
+            [name]="'price'"
+            [checked]="
+              !isCustomPrice() && filter().price.range[0] === option.value[0]
+            "
+            (change)="selectPresetPrice(option.value)"
+          />
+          <label [for]="'price-' + option.value.join('-')">{{
+            option.label
+          }}</label>
+        </div>
+
+        <!-- Custom price -->
+        <div class="filter-option">
+          <input
+            type="radio"
+            id="price-custom"
+            name="price"
+            [checked]="isCustomPrice()"
+            (change)="enableCustomPrice()"
+          />
+          <label for="price-custom">Custom</label>
+
+          <div *ngIf="isCustomPrice()" class="mt-4">
+            <div class="flex justify-between items-center mb-2">
+              <span>${{ priceMin() }}</span>
+              <span>${{ priceMax() }}</span>
+            </div>
+            <mat-slider
+              [min]="rangeMin"
+              [max]="rangeMax"
+              [step]="sliderStep"
+              [discrete]="true"
+              class="w-full"
+            >
+              <input
+                matSliderStartThumb
+                [(ngModel)]="filter().price.range[0]"
+                (valueChange)="onSliderChange()"
+              />
+              <input
+                matSliderEndThumb
+                [(ngModel)]="filter().price.range[1]"
+                (valueChange)="onSliderChange()"
+              />
+            </mat-slider>
+          </div>
+        </div>
+      </p-accordion-content>
+    </p-accordion-panel>
+  </p-accordion>
+</div>

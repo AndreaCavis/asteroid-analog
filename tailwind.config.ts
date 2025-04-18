@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import PrimeUI from 'tailwindcss-primeui';
 
 export default {
   darkMode: ['class'],
@@ -74,5 +75,5 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'), PrimeUI],
 } satisfies Config;
