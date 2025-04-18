@@ -12,29 +12,40 @@ import { Product } from '../../../utils/validators/product.validators';
   template: `
     <a
       [routerLink]="['/products/' + product.id]"
-      class="border rounded shadow p-4 flex flex-col justify-between h-full bg-white dark:bg-gray-900 hover:shadow-md transition"
+      class="group bg-none rounded-md w-52"
     >
       @if (product.imageUrl) {
       <img
-        [src]="product.imageUrl"
-        alt="{{ product.name }}"
-        class="w-full h-40 object-cover rounded mb-4"
+        [src]="'/' + product.imageUrl"
+        alt="{{ product.name }} + image"
+        width="208"
+        height="208"
+        class="object-fill rounded-md lg:w-52 lg:h-52 md:w-44 md:h-44 sm:w-32 sm:h-32 w-24 h-24
+          group-hover:opacity-100 scale-90 opacity-75 group-hover:scale-100 transition-all duration-300 ease"
       />
       }
 
-      <div class="flex-grow">
-        <h2 class="font-semibold text-lg mb-1">{{ product.name }}</h2>
-        <p class="text-sm text-gray-500 mb-1">Brand: {{ product.brand }}</p>
-        <p class="text-sm text-gray-400 mb-2 capitalize">
-          Type: {{ product.type }}
-        </p>
-        <p class="text-sm text-gray-600">
-          {{ product.suggested_use }}
-        </p>
-      </div>
-
-      <div class="mt-4 font-semibold text-blue-600">
-        £{{ product.price.toFixed(2) }}
+      <div class="group-hover:opacity-100">
+        <div
+          class="p-2 lg:w-52 md:w-44 sm:w-32 w-24 lg:text-lg md:text-base sm:text-sm text-xs"
+        >
+          <h2
+            class="animated-text transition-opacity duration-200 opacity-75 group-hover:opacity-100 
+          lg:text-xl md:text-lg sm:text-base text-sm font-semibold"
+          >
+            {{ product.name }}
+          </h2>
+          <h3
+            class="transition-all duration-200 opacity-75 group-hover:opacity-100 text-accent-foreground font-normal mb-1"
+          >
+            {{ product.brand }}
+          </h3>
+          <p
+            class="text-accent-foreground font-semibold opacity-75 transition-all duration-0 group-hover:opacity-100"
+          >
+            £ <span class="text-primary">{{ product.price }}</span>
+          </p>
+        </div>
       </div>
     </a>
   `,

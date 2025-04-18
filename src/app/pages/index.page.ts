@@ -18,16 +18,26 @@ import { SearchbarComponent } from '../components/searchbar/searchbar.component'
     SearchbarComponent,
   ],
   template: `
-    <div class="min-h-screen flex flex-col items-center p-6 max-w-5xl mx-auto">
-      <h1 class="text-3xl md:text-5xl font-bold text-center my-8">
-        Search and compare supplements from multiple brands
-      </h1>
+    <main class="mx-auto max-w-7xl pt-4 px-4 sm:px-6 lg:px-8">
+      <div
+        class="flex items-baseline justify-between border-b-2 border-stone-600 pb-4"
+      >
+        <h1
+          class="font-semibold tracking-tight text-accent-foreground lg:text-4xl md:text-3xl sm:text-2xl text-xl "
+        >
+          Find the
+          <span class="text-primary underlined">supplements</span> you're
+          looking for
+        </h1>
+      </div>
 
-      <div class="w-full max-w-md mb-8">
+      <div class="flex justify-center">
         <app-searchbar />
       </div>
 
-      <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div
+        class="m-4 grid gap-x-4 gap-y-8 lg:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] md:grid-cols-3 sm:grid-cols-3 grid-cols-3"
+      >
         @if (showSkeletons()) { @for (s of skeletons; track s) {
         <app-product-card-skeleton />
         } } @else if (!isEmpty()) { @for (product of products(); track
@@ -36,7 +46,7 @@ import { SearchbarComponent } from '../components/searchbar/searchbar.component'
         <app-empty-state [name]="" />
         }
       </div>
-    </div>
+    </main>
   `,
 })
 export default class IndexPage {
