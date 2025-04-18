@@ -1,6 +1,6 @@
 // src/app/pages/search.page.ts
 
-import { Component, inject, effect, computed } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
