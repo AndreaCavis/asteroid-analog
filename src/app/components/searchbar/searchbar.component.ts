@@ -26,7 +26,7 @@ import { lucideSearch } from '@ng-icons/lucide';
       <input
         #searchInput
         type="search"
-        class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full border bg-transparent border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Search for supplements..."
         [(ngModel)]="searchValue"
         name="search"
@@ -46,7 +46,7 @@ import { lucideSearch } from '@ng-icons/lucide';
       >
         <ng-icon
           name="lucideSearch"
-          class="w-5 h-5 text-black hover:text-current"
+          class="w-5 h-5 text-current hover:text-primary"
         />
       </button>
 
