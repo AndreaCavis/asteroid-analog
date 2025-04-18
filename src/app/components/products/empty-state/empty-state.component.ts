@@ -8,7 +8,7 @@ import { NgIf } from '@angular/common';
   standalone: true,
   template: `
     <div
-      class="relative flex flex-col mx-auto col-span-full p-12 lg:h-80 md:h-64 sm:h-60 h-52 w-3/4 bg-stone-900 rounded-md items-center justify-center"
+      class="relative flex flex-col mx-auto p-12 lg:h-80 md:h-64 sm:h-60 h-52 w-3/4 bg-stone-900 rounded-md items-center justify-center"
     >
       <i
         class="pi pi-times-circle p-2 text-red-600 lg:text-5xl md:text-2xl sm:text-xl text-lg"
