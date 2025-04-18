@@ -2,14 +2,11 @@
 
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft } from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-product-details-skeleton',
   standalone: true,
-  imports: [CommonModule, NgIconComponent],
-  providers: [provideIcons({ lucideArrowLeft })],
+  imports: [CommonModule],
   template: `
     <main>
       <!-- Back Button Skeleton -->
@@ -17,7 +14,7 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
         <div
           class="mt-4 mr-auto ml-12 text-stone-500 lg:text-4xl md:text-3xl sm:text-2xl text-xl animate-pulse"
         >
-          <ng-icon name="lucideArrowLeft" />
+          <i class="pi pi-arrow-left"></i>
         </div>
       </div>
 
