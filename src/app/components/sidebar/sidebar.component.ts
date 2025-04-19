@@ -2,7 +2,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AccordionModule } from 'primeng/accordion';
 import { MatSliderModule } from '@angular/material/slider';
 
 import {
@@ -13,11 +12,25 @@ import {
   DEFAULT_CUSTOM_PRICE,
   FiltersContext,
 } from '../../contexts/filters.context';
+import {
+  AccordionComponent,
+  AccordionItemComponent,
+  AccordionTriggerComponent,
+  AccordionContentComponent,
+} from '../accordion/accordion.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, MatSliderModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatSliderModule,
+    AccordionComponent,
+    AccordionItemComponent,
+    AccordionTriggerComponent,
+    AccordionContentComponent,
+  ],
   templateUrl: './sidebar.component.html',
 })
 export class SidebarComponent {
