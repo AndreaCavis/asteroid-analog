@@ -14,7 +14,7 @@ import { FiltersContext, RESET_FILTERS } from './contexts/filters.context';
       <app-navbar />
 
       <div class="flex flex-1 items-stretch lg:pt-24 md:pt-20 sm:pt-16 pt-12">
-        <app-sidebar />
+        <app-sidebar class="w-1/5" />
         <div class="flex-grow">
           <router-outlet />
         </div>
