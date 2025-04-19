@@ -7,8 +7,6 @@ import { ApplicationConfig } from '@angular/core';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
-import { provideIcons } from '@ng-icons/core';
-import { lucideSearch } from '@ng-icons/lucide';
 import { providePrimeNG } from 'primeng/config';
 
 export const appConfig: ApplicationConfig = {
@@ -20,7 +18,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([requestContextInterceptor])
     ),
     provideClientHydration(),
-    provideIcons({ lucideSearch }),
     providePrimeNG({
       theme: {
         options: {
