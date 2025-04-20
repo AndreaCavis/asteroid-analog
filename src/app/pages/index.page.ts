@@ -1,7 +1,5 @@
 // src/app/pages/index.page.ts
 import { Component, inject, computed } from '@angular/core';
-import { NgIf, NgFor } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FiltersContext } from '../contexts/filters.context';
 import { ProductCardComponent } from '../components/products/product-card/product-card.component';
 import { ProductCardSkeletonComponent } from '../components/products/product-card-skeleton/product-card-skeleton.component';

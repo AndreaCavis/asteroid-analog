@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Input, input, OnInit, signal } from '@angular/core';
 
 // 🧠 Shared context for each AccordionItem
 export class AccordionItemContext {
@@ -11,7 +11,6 @@ export class AccordionItemContext {
   selector: 'Accordion',
   standalone: true,
   template: `<ng-content></ng-content>`,
-  host: { class: 'space-y-2 block' },
 })
 export class AccordionComponent {}
 
@@ -20,11 +19,20 @@ export class AccordionComponent {}
   selector: 'AccordionItem',
   standalone: true,
   providers: [AccordionItemContext],
-  template: `<ng-content></ng-content>`,
-  host: { class: 'border-b border-stone-600' },
+  template: `<div class="border-b border-stone-600">
+    <ng-content></ng-content>
+  </div>`,
+  // host: { class: 'border-b border-stone-600' },
 })
-export class AccordionItemComponent {
+export class AccordionItemComponent implements OnInit {
+  @Input() value!: string;
+  @Input() activeIndex: string[] = [];
+
   ctx = inject(AccordionItemContext);
+
+  ngOnInit() {
+    this.ctx.isOpen.set(this.activeIndex.includes(this.value));
+  }
 }
 
 // 🧩 Accordion Trigger
@@ -34,7 +42,7 @@ export class AccordionItemComponent {
   template: `
     <button
       (click)="ctx.toggle()"
-      class="group flex w-full items-center justify-between py-4 text-sm font-medium text-left"
+      class="group flex w-full items-center justify-between py-4 text-xs font-normal text-left"
       [attr.aria-expanded]="ctx.isOpen()"
       [attr.data-state]="ctx.isOpen() ? 'open' : 'closed'"
     >

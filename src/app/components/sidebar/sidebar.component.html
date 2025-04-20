@@ -3,7 +3,7 @@
 <div class="w-full px-3 border-r-2 border-pink-800/50 flex-none min-h-full">
   <Accordion>
     <!-- Sort -->
-    <AccordionItem>
+    <AccordionItem value="sort">
       <AccordionTrigger>
         <span
           class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
@@ -11,7 +11,7 @@
           Sort
         </span>
       </AccordionTrigger>
-      <AccordionContent class="space-y-4">
+      <AccordionContent>
         <div *ngFor="let option of sortOptions">
           <input
             type="radio"
@@ -20,14 +20,19 @@
             [value]="option.value"
             [checked]="filter().sort === option.value"
             (change)="applySort(option.value)"
+            class="space-y-2"
           />
-          <label [for]="option.value">{{ option.label }}</label>
+          <label
+            [for]="option.value"
+            class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+            >{{ option.label }}</label
+          >
         </div>
       </AccordionContent>
     </AccordionItem>
 
     <!-- Type -->
-    <AccordionItem>
+    <AccordionItem value="type" [activeIndex]="['type']">
       <AccordionTrigger>
         <span
           class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
@@ -35,21 +40,26 @@
           Supplement
         </span>
       </AccordionTrigger>
-      <AccordionContent class="space-y-4">
+      <AccordionContent>
         <div *ngFor="let option of typeOptions">
           <input
             type="checkbox"
             [id]="option.value"
             [checked]="filter().type.includes(option.value)"
             (change)="applyArrayFilter('type', option.value)"
+            class="space-y-2"
           />
-          <label [for]="option.value">{{ option.label }}</label>
+          <label
+            [for]="option.value"
+            class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+            >{{ option.label }}</label
+          >
         </div>
       </AccordionContent>
     </AccordionItem>
 
     <!-- Brand -->
-    <AccordionItem>
+    <AccordionItem value="brand" [activeIndex]="['brand']">
       <AccordionTrigger>
         <span
           class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
@@ -57,29 +67,34 @@
           Brand
         </span>
       </AccordionTrigger>
-      <AccordionContent class="space-y-4">
+      <AccordionContent>
         <div *ngFor="let option of brandOptions">
           <input
             type="checkbox"
             [id]="option.value"
             [checked]="filter().brand.includes(option.value)"
             (change)="applyArrayFilter('brand', option.value)"
+            class="space-y-2"
           />
-          <label [for]="option.value">{{ option.label }}</label>
+          <label
+            [for]="option.value"
+            class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+            >{{ option.label }}</label
+          >
         </div>
       </AccordionContent>
     </AccordionItem>
 
     <!-- Price -->
-    <AccordionItem>
+    <AccordionItem value="price" [activeIndex]="['price']">
       <AccordionTrigger>
         <span
-          class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
+          class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary text-lg"
         >
           Price
         </span>
       </AccordionTrigger>
-      <AccordionContent class="space-y-4">
+      <AccordionContent>
         <div *ngFor="let option of priceOptions">
           <input
             type="radio"
@@ -89,8 +104,12 @@
               !isCustomPrice() && filter().price.range[0] === option.value[0]
             "
             (change)="selectPresetPrice(option.value)"
+            class="space-y-2"
           />
-          <label [for]="'price-' + option.value.join('-')">
+          <label
+            [for]="'price-' + option.value.join('-')"
+            class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+          >
             {{ option.label }}
           </label>
         </div>
@@ -103,7 +122,14 @@
           [checked]="isCustomPrice()"
           (change)="enableCustomPrice()"
         />
-        <label for="price-custom">Custom</label>
+        <label
+          for="price-custom"
+          class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+        >
+          Custom</label
+        >
+
+        TODO: ADJUST SPACING BETWEEN CONTENT AND MORE (space-y-2 in input)
 
         <div *ngIf="isCustomPrice()" class="mt-4">
           <div class="flex justify-between items-center mb-2">
