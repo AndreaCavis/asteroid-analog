@@ -3,7 +3,7 @@
 <div class="w-full px-3 border-r-2 border-pink-800/50 flex-none min-h-full">
   <Accordion>
     <!-- Sort -->
-    <AccordionItem value="sort">
+    <AccordionItem value="sort" [activeIndex]="['sort']">
       <AccordionTrigger>
         <span
           class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
@@ -12,22 +12,26 @@
         </span>
       </AccordionTrigger>
       <AccordionContent>
-        <div *ngFor="let option of sortOptions">
-          <input
-            type="radio"
-            [id]="option.value"
-            [name]="'sort'"
-            [value]="option.value"
-            [checked]="filter().sort === option.value"
-            (change)="applySort(option.value)"
-            class="space-y-2"
-          />
-          <label
-            [for]="option.value"
-            class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
-            >{{ option.label }}</label
-          >
-        </div>
+        @for (option of sortOptions; track option.value) {
+        <ul class="space-y-2">
+          <li class="flex items-center">
+            <input
+              type="radio"
+              class="peer"
+              [id]="option.value"
+              [name]="'sort'"
+              [value]="option.value"
+              [checked]="filter().sort === option.value"
+              (change)="applySort(option.value)"
+            />
+            <label
+              [for]="option.value"
+              class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+              >{{ option.label }}</label
+            >
+          </li>
+        </ul>
+        }
       </AccordionContent>
     </AccordionItem>
 

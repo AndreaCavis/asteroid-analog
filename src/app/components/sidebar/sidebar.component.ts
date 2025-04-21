@@ -38,7 +38,7 @@ export class SidebarComponent {
   filter = this.filters.filter$;
 
   // Initialize with all panels except Sort open. add sort to the activeIndex to open it by default
-  activeIndex: string[] = ['type', 'brand', 'price'];
+  activeIndex: string[] = ['sort', 'type', 'brand'];
 
   // UI metadata
   sortOptions = SORT_FILTERS.options;
