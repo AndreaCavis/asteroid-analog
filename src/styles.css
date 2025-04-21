@@ -247,7 +247,7 @@ input[type="search"]::-webkit-search-cancel-button {
   left: 0;
   height: 2px;
   width: 100%;
-  background: linear-gradient(to right, #0a0a0a, #ea3680 50%, #0a0a0a);
+  background: linear-gradient(to right, #0a0a0a, #ea3680 20%, #0a0a0a);
   pointer-events: none;
 }
 

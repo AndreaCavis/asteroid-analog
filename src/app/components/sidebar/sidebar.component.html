@@ -6,7 +6,7 @@
     <AccordionItem value="sort" [activeIndex]="['sort']">
       <AccordionTrigger>
         <span
-          class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
+          class="transition-all duration-300 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
         >
           Sort
         </span>
@@ -26,7 +26,7 @@
             />
             <label
               [for]="option.value"
-              class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+              class="transition-all duration-100 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
               >{{ option.label }}</label
             >
           </li>
@@ -39,26 +39,30 @@
     <AccordionItem value="type" [activeIndex]="['type']">
       <AccordionTrigger>
         <span
-          class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
+          class="transition-all duration-300 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
         >
           Supplement
         </span>
       </AccordionTrigger>
       <AccordionContent>
-        <div *ngFor="let option of typeOptions">
-          <input
-            type="checkbox"
-            [id]="option.value"
-            [checked]="filter().type.includes(option.value)"
-            (change)="applyArrayFilter('type', option.value)"
-            class="space-y-2"
-          />
-          <label
-            [for]="option.value"
-            class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
-            >{{ option.label }}</label
-          >
-        </div>
+        @for (option of typeOptions; track option.value) {
+        <ul class="space-y-2">
+          <li class="flex items-center">
+            <input
+              type="checkbox"
+              class="peer"
+              [id]="option.value"
+              [checked]="filter().type.includes(option.value)"
+              (change)="applyArrayFilter('type', option.value)"
+            />
+            <label
+              [for]="option.value"
+              class="transition-all duration-100 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+              >{{ option.label }}</label
+            >
+          </li>
+        </ul>
+        }
       </AccordionContent>
     </AccordionItem>
 
@@ -66,26 +70,30 @@
     <AccordionItem value="brand" [activeIndex]="['brand']">
       <AccordionTrigger>
         <span
-          class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
+          class="transition-all duration-300 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
         >
           Brand
         </span>
       </AccordionTrigger>
       <AccordionContent>
-        <div *ngFor="let option of brandOptions">
-          <input
-            type="checkbox"
-            [id]="option.value"
-            [checked]="filter().brand.includes(option.value)"
-            (change)="applyArrayFilter('brand', option.value)"
-            class="space-y-2"
-          />
-          <label
-            [for]="option.value"
-            class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
-            >{{ option.label }}</label
-          >
-        </div>
+        @for (option of brandOptions; track option.value) {
+        <ul class="space-y-2">
+          <li class="flex items-center">
+            <input
+              type="checkbox"
+              class="peer"
+              [id]="option.value"
+              [checked]="filter().brand.includes(option.value)"
+              (change)="applyArrayFilter('brand', option.value)"
+            />
+            <label
+              [for]="option.value"
+              class="transition-all duration-100 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+              >{{ option.label }}</label
+            >
+          </li>
+        </ul>
+        }
       </AccordionContent>
     </AccordionItem>
 
@@ -93,71 +101,66 @@
     <AccordionItem value="price" [activeIndex]="['price']">
       <AccordionTrigger>
         <span
-          class="transition-all duration-500 font-medium text-accent-foreground group-hover:text-primary text-lg"
+          class="transition-all duration-300 font-medium text-accent-foreground group-hover:text-primary lg:text-lg md:text-base sm:text-sm text-xs"
         >
           Price
         </span>
       </AccordionTrigger>
       <AccordionContent>
-        <div *ngFor="let option of priceOptions">
-          <input
-            type="radio"
-            [id]="'price-' + option.value.join('-')"
-            [name]="'price'"
-            [checked]="
-              !isCustomPrice() && filter().price.range[0] === option.value[0]
-            "
-            (change)="selectPresetPrice(option.value)"
-            class="space-y-2"
-          />
-          <label
-            [for]="'price-' + option.value.join('-')"
-            class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
-          >
-            {{ option.label }}
-          </label>
-        </div>
+        @for (option of priceOptions; track option.value) {
+        <ul class="space-y-2">
+          <li class="flex items-center">
+            <input
+              type="radio"
+              class="peer"
+              [id]="'price-' + option.value.join('-')"
+              [name]="'price'"
+              [checked]="
+                !isCustomPrice() && filter().price.range[0] === option.value[0]
+              "
+              (change)="selectPresetPrice(option.value)"
+            />
+            <label
+              [for]="'price-' + option.value.join('-')"
+              class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+            >
+              {{ option.label }}
+            </label>
+          </li>
+        </ul>
+        }
 
         <!-- Custom price -->
-        <input
-          type="radio"
-          id="price-custom"
-          name="price"
-          [checked]="isCustomPrice()"
-          (change)="enableCustomPrice()"
-        />
-        <label
-          for="price-custom"
-          class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
-        >
-          Custom</label
-        >
-
-        TODO: ADJUST SPACING BETWEEN CONTENT AND MORE (space-y-2 in input)
+        <ul class="space-y-2 mt-2">
+          <li class="flex items-center">
+            <input
+              type="radio"
+              class="peer"
+              id="price-custom"
+              name="price"
+              [checked]="isCustomPrice()"
+              (change)="enableCustomPrice()"
+            />
+            <label
+              for="price-custom"
+              class="transition-all duration-500 ml-3 lg:text-base md:text-sm sm:text-xs text-xs text-stone-400 peer-hover:text-accent-foreground peer-checked:text-accent-foreground peer-checked:hover:text-primary-light"
+            >
+              Custom
+            </label>
+          </li>
+        </ul>
 
         <div *ngIf="isCustomPrice()" class="mt-4">
           <div class="flex justify-between items-center mb-2">
-            <span>${{ priceMin() }}</span>
-            <span>${{ priceMax() }}</span>
+            <span>£{{ priceMin() }}</span>
+            <span>£{{ priceMax() }}</span>
           </div>
-          <mat-slider
+          <app-slider
             [min]="rangeMin"
             [max]="rangeMax"
-            [step]="sliderStep"
-            [discrete]="true"
-            class="w-full"
-          >
-            <input
-              matSliderStartThumb
-              [(ngModel)]="filter().price.range[0]"
-              (valueChange)="onSliderChange()"
-            />
-            <input
-              matSliderEndThumb
-              [(ngModel)]="filter().price.range[1]"
-              (valueChange)="onSliderChange()"
-            />
-          </mat-slider>
+            [values]="[filter().price.range[0], filter().price.range[1]]"
+            (valuesChange)="onSliderChange($event)"
+          ></app-slider>
         </div>
       </AccordionContent>
     </AccordionItem>

@@ -18,6 +18,7 @@ import {
   AccordionTriggerComponent,
   AccordionContentComponent,
 } from '../accordion/accordion.component';
+import { SliderComponent } from '../slider/slider.component';
 
 @Component({
   selector: 'app-sidebar',
@@ -30,6 +31,7 @@ import {
     AccordionItemComponent,
     AccordionTriggerComponent,
     AccordionContentComponent,
+    SliderComponent,
   ],
   templateUrl: './sidebar.component.html',
 })
@@ -100,8 +102,15 @@ export class SidebarComponent {
     this.filters.debouncedRefetch();
   }
 
-  onSliderChange() {
-    // Ensure the filter is updated and trigger a refetch when slider stops
-    this.filters.debouncedRefetch();
+  onSliderChange(values: [number, number]) {
+    // Update the price range with both values
+    const currentFilter = this.filter();
+    this.filters.setFilter({
+      ...currentFilter,
+      price: {
+        ...currentFilter.price,
+        range: values,
+      },
+    });
   }
 }
