@@ -25,7 +25,7 @@ import { Product } from '../../../utils/validators/product.validators';
       />
       }
 
-      <div class="group-hover:opacity-100">
+      <div>
         <div
           class="p-2 lg:w-52 md:w-44 sm:w-32 w-24 lg:text-lg md:text-base sm:text-sm text-xs"
         >

@@ -20,12 +20,19 @@ import { ProductCardSkeletonComponent } from '../components/products/product-car
     ProductCardSkeletonComponent,
   ],
   template: `
-    <main class="flex flex-col gap-6 w-full">
-      <app-searchbar />
+    <main class="mx-auto pt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto w-1/2">
+        <app-searchbar />
+      </div>
 
       <!-- Header if results -->
       @if (searchQuery() && products().length > 0) {
-      <h1 class="text-2xl font-bold">Results for “{{ searchQuery() }}”</h1>
+      <h1 class="text-white text-2xl">
+        Results for
+        <span class="text-primary text-2xl underlined">{{
+          searchQuery()
+        }}</span>
+      </h1>
       }
       <!-- conditional page rendering -->
       @if(searchQuery()) {
@@ -36,7 +43,7 @@ import { ProductCardSkeletonComponent } from '../components/products/product-car
       <!-- skeleton and products grid -->
       @else {
       <div
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+        class="m-4 grid gap-x-4 gap-y-8 lg:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] md:grid-cols-3 sm:grid-cols-3 grid-cols-3"
       >
         <!-- skeleton -->
         @if (!products()) { @for (i of skeletonCount; track skeletonCount[i]) {

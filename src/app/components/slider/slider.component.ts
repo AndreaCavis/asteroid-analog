@@ -50,9 +50,9 @@ export class ValueConversionService {
     <div
       #thumb
       [class]="
-        'absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 block h-4 w-4 rounded-full border-2 border-primary bg-background transition-all duration-300 ease-out ' +
+        'block h-4 w-4 rounded-full border-2 border-primary bg-background transition-colors absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 ' +
         (disabled ? 'pointer-events-none opacity-50 ' : '') +
-        (isDragging ? 'cursor-grabbing border-primary-dark ' : 'cursor-grab ') +
+        (isDragging ? 'cursor-grabbing border-primary ' : 'cursor-grab ') +
         (isHovered || isDragging ? 'scale-110' : '')
       "
       [style.left]="position + '%'"
@@ -64,6 +64,7 @@ export class ValueConversionService {
       (touchstart)="onTouchStart($event)"
       (mouseenter)="onMouseEnter()"
       (mouseleave)="onMouseLeave()"
+      tabindex="0"
     ></div>
   `,
 })
@@ -316,10 +317,8 @@ export class SliderThumbComponent implements OnInit, OnDestroy {
   template: `
     <div
       #rangeElement
-      [class]="
-        'absolute h-full bg-primary transition-all duration-300 ease-out ' +
-        (disabled ? 'opacity-50' : '')
-      "
+      class="absolute h-full bg-primary"
+      [class.opacity-50]="disabled"
       [style.left]="left + '%'"
       [style.width]="width + '%'"
       role="presentation"
@@ -560,7 +559,7 @@ export class SliderTrackComponent implements OnInit, OnDestroy {
     SliderThumbComponent,
   ],
   template: `
-    <div class="relative w-full" #track>
+    <div class="relative w-full select-none px-2" #track>
       <app-slider-track (trackClick)="onTrackClick($event)">
         <app-slider-range
           [left]="rangePosition().left"

@@ -13,7 +13,7 @@
       </AccordionTrigger>
       <AccordionContent>
         @for (option of sortOptions; track option.value) {
-        <ul class="space-y-2">
+        <ul>
           <li class="flex items-center">
             <input
               type="radio"
@@ -46,7 +46,7 @@
       </AccordionTrigger>
       <AccordionContent>
         @for (option of typeOptions; track option.value) {
-        <ul class="space-y-2">
+        <ul>
           <li class="flex items-center">
             <input
               type="checkbox"
@@ -77,7 +77,7 @@
       </AccordionTrigger>
       <AccordionContent>
         @for (option of brandOptions; track option.value) {
-        <ul class="space-y-2">
+        <ul>
           <li class="flex items-center">
             <input
               type="checkbox"
@@ -108,7 +108,7 @@
       </AccordionTrigger>
       <AccordionContent>
         @for (option of priceOptions; track option.value) {
-        <ul class="space-y-2">
+        <ul>
           <li class="flex items-center">
             <input
               type="radio"
@@ -131,7 +131,7 @@
         }
 
         <!-- Custom price -->
-        <ul class="space-y-2">
+        <ul class="space-y-20">
           <li class="flex items-center">
             <input
               type="radio"
@@ -152,13 +152,32 @@
 
         <div
           *ngIf="isCustomPrice()"
-          class="mt-4"
           role="group"
           aria-label="Custom price range"
         >
-          <div class="flex justify-between items-center mb-2">
-            <span aria-label="Minimum price">£{{ priceMin().toFixed(2) }}</span>
-            <span aria-label="Maximum price">£{{ priceMax().toFixed(2) }}</span>
+          <div
+            class="flex justify-between pb-4 text-accent-foreground font-medium lg:text-base md:text-sm sm:text-xs text-xs"
+          >
+            <p
+              [class]="
+                filter().price.isCustom
+                  ? 'text-primary-light hover:text-primary'
+                  : ''
+              "
+            >
+              Price
+            </p>
+
+            <div>
+              £<span aria-label="Minimum price" class="text-primary">{{
+                priceMin().toFixed(2)
+              }}</span
+              >{{ " " }}- £<span
+                aria-label="Maximum price"
+                class="text-primary"
+                >{{ priceMax().toFixed(2) }}</span
+              >
+            </div>
           </div>
           <app-slider
             [min]="rangeMin"
@@ -172,4 +191,5 @@
       </AccordionContent>
     </AccordionItem>
   </Accordion>
+  <div class="pb-10"></div>
 </div>
