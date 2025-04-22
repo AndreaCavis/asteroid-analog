@@ -23,8 +23,22 @@ export class ValueConversionService {
     return ((value - min) / (max - min)) * 100;
   }
 
-  convertFromPercentage(percentage: number, min: number, max: number): number {
-    return Math.round(min + (percentage / 100) * (max - min));
+  convertFromPercentage(
+    percentage: number,
+    min: number,
+    max: number,
+    step: number = 1
+  ): number {
+    const rawValue = min + (percentage / 100) * (max - min);
+    if (step === 0) return rawValue;
+    return Math.round(rawValue / step) * step;
+  }
+
+  snapToStep(value: number, min: number, max: number, step: number): number {
+    if (step === 0) return value;
+    const normalized = value - min;
+    const steppedValue = Math.round(normalized / step) * step;
+    return Math.max(min, Math.min(max, min + steppedValue));
   }
 }
 
@@ -35,86 +49,258 @@ export class ValueConversionService {
   template: `
     <div
       #thumb
-      class="absolute top-1/2 -translate-y-1/2 transform block h-4 w-4 rounded-full border-2 border-primary bg-background transition-colors disabled:pointer-events-none disabled:opacity-50"
+      class="absolute top-1/2 -translate-y-1/2 transform block h-4 w-4 rounded-full border-2 border-primary bg-background transition-all duration-300 ease-out disabled:pointer-events-none disabled:opacity-50"
       [ngStyle]="getPositionStyle()"
-      [class.cursor-grab]="!disabled"
-      [class.cursor-grabbing]="isDragging"
-      [class.opacity-50]="disabled"
+      [class]="getCursorClass()"
+      [class.scale-110]="isHovered || isDragging"
+      [class.border-primary-dark]="isDragging"
       role="slider"
       [attr.aria-label]="ariaLabel"
       [attr.aria-valuenow]="value"
       [attr.aria-disabled]="disabled"
       (mousedown)="onMouseDown($event)"
+      (touchstart)="onTouchStart($event)"
+      (mouseenter)="onMouseEnter()"
+      (mouseleave)="onMouseLeave()"
     ></div>
   `,
 })
 export class SliderThumbComponent implements OnInit, OnDestroy {
   @Input() position = 0;
-  @Input() value = 0;
   @Input() disabled = false;
   @Input() ariaLabel = '';
 
-  @Output() thumbMove = new EventEmitter<MouseEvent>();
+  private _value = 0;
+  @Input()
+  get value(): number {
+    return this._value;
+  }
+  set value(newValue: number) {
+    // Validate number
+    if (typeof newValue !== 'number') {
+      console.warn(
+        'SliderThumb: Value must be a number, received:',
+        typeof newValue
+      );
+      newValue = 0;
+    }
+
+    // Handle NaN and Infinity
+    if (!Number.isFinite(newValue)) {
+      console.warn(
+        'SliderThumb: Value must be a finite number, received:',
+        newValue
+      );
+      newValue = 0;
+    }
+
+    // Only emit if value actually changed
+    if (this._value !== newValue) {
+      this._value = newValue;
+      this.updateAriaAttributes();
+      this.valueChange.emit(this._value);
+    }
+  }
+
+  @Output() thumbMove = new EventEmitter<{ clientX: number }>();
+  @Output() dragEnd = new EventEmitter<void>();
+  @Output() valueChange = new EventEmitter<number>();
 
   @ViewChild('thumb') thumbElement!: ElementRef<HTMLDivElement>;
 
   protected isDragging = false;
+  protected isHovered = false;
 
   private boundMouseMove: (e: MouseEvent) => void;
   private boundMouseUp: () => void;
+  private boundTouchMove: (e: TouchEvent) => void;
+  private boundTouchEnd: () => void;
+  private resizeObserver: ResizeObserver | null = null;
 
   constructor() {
     this.boundMouseMove = this.onMouseMove.bind(this);
     this.boundMouseUp = this.onMouseUp.bind(this);
+    this.boundTouchMove = this.onTouchMove.bind(this);
+    this.boundTouchEnd = this.onTouchEnd.bind(this);
   }
 
   getPositionStyle(): { [key: string]: string } {
+    const position = this.validatePosition(this.position);
     return {
-      left: `${this.position}%`,
+      left: `${position}%`,
       transform: `translateX(-50%) translateY(-50%)`,
-      transition: this.isDragging ? 'none' : 'left 0.1s ease-out',
+      transition: this.isDragging ? 'none' : 'all 0.3s ease-out',
     };
   }
 
+  getCursorClass(): string {
+    if (this.disabled) return '';
+    return this.isDragging ? 'cursor-grabbing' : 'cursor-grab';
+  }
+
+  private validatePosition(position: number): number {
+    if (isNaN(position)) {
+      console.warn('SliderThumb: Invalid position value');
+      return 0;
+    }
+    return Math.max(0, Math.min(100, position));
+  }
+
+  // Mouse Events
+  onMouseEnter(): void {
+    if (!this.disabled) {
+      this.isHovered = true;
+    }
+  }
+
+  onMouseLeave(): void {
+    this.isHovered = false;
+  }
+
   onMouseDown(event: MouseEvent): void {
-    if (this.disabled) return;
+    if (this.disabled || event.button !== 0) return; // Only handle left click
 
     event.preventDefault();
-    this.isDragging = true;
+    this.startDragging();
 
     document.addEventListener('mousemove', this.boundMouseMove);
     document.addEventListener('mouseup', this.boundMouseUp);
 
-    this.thumbMove.emit(event);
+    this.thumbMove.emit({ clientX: event.clientX });
   }
 
   onMouseMove(event: MouseEvent): void {
     if (this.disabled || !this.isDragging) return;
-    this.thumbMove.emit(event);
+    event.preventDefault();
+
+    if (event.buttons === 0) {
+      // Mouse button was released outside the window
+      this.onMouseUp();
+      return;
+    }
+
+    this.thumbMove.emit({ clientX: event.clientX });
   }
 
   onMouseUp(): void {
-    this.isDragging = false;
+    this.stopDragging();
     document.removeEventListener('mousemove', this.boundMouseMove);
     document.removeEventListener('mouseup', this.boundMouseUp);
   }
 
+  // Touch Events
+  onTouchStart(event: TouchEvent): void {
+    if (this.disabled || event.touches.length !== 1) return;
+
+    event.preventDefault();
+    this.startDragging();
+
+    document.addEventListener('touchmove', this.boundTouchMove, {
+      passive: false,
+    });
+    document.addEventListener('touchend', this.boundTouchEnd);
+    document.addEventListener('touchcancel', this.boundTouchEnd);
+
+    const touch = event.touches[0];
+    this.thumbMove.emit({ clientX: touch.clientX });
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    if (this.disabled || !this.isDragging || event.touches.length !== 1) {
+      this.onTouchEnd();
+      return;
+    }
+
+    event.preventDefault();
+    const touch = event.touches[0];
+    this.thumbMove.emit({ clientX: touch.clientX });
+  }
+
+  onTouchEnd(): void {
+    this.stopDragging();
+    document.removeEventListener('touchmove', this.boundTouchMove);
+    document.removeEventListener('touchend', this.boundTouchEnd);
+    document.removeEventListener('touchcancel', this.boundTouchEnd);
+  }
+
+  // Drag State Management
+  private startDragging(): void {
+    if (this.isDragging) return; // Prevent multiple drag starts
+
+    this.isDragging = true;
+    document.body.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+
+    // Setup resize observer for container changes during drag
+    this.setupResizeObserver();
+  }
+
+  private stopDragging(): void {
+    if (!this.isDragging) return;
+
+    this.isDragging = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    this.dragEnd.emit();
+
+    // Cleanup resize observer
+    this.cleanupResizeObserver();
+  }
+
+  private setupResizeObserver(): void {
+    if (!this.thumbElement?.nativeElement.parentElement) return;
+
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.isDragging) {
+        this.stopDragging(); // Stop dragging if container resizes
+      }
+    });
+
+    this.resizeObserver.observe(this.thumbElement.nativeElement.parentElement);
+  }
+
+  private cleanupResizeObserver(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+  }
+
   ngOnInit(): void {
+    this.validateAndUpdatePosition();
     this.updateAriaAttributes();
   }
 
   ngOnDestroy(): void {
     this.thumbMove.complete();
+    this.dragEnd.complete();
+    this.valueChange.complete();
+    this.cleanupResizeObserver();
+
     if (this.isDragging) {
       document.removeEventListener('mousemove', this.boundMouseMove);
       document.removeEventListener('mouseup', this.boundMouseUp);
+      document.removeEventListener('touchmove', this.boundTouchMove);
+      document.removeEventListener('touchend', this.boundTouchEnd);
+      document.removeEventListener('touchcancel', this.boundTouchEnd);
+      this.stopDragging();
+    }
+  }
+
+  private validateAndUpdatePosition(): void {
+    const validPosition = this.validatePosition(this.position);
+    if (validPosition !== this.position) {
+      console.warn(
+        `SliderThumb: Position value ${this.position} was clamped to ${validPosition}`
+      );
+      this.position = validPosition;
     }
   }
 
   private updateAriaAttributes(): void {
     if (!this.thumbElement?.nativeElement) return;
     const element = this.thumbElement.nativeElement;
-    element.setAttribute('aria-valuenow', this.value.toString());
+    element.setAttribute('aria-valuenow', this._value.toString());
     if (this.ariaLabel) {
       element.setAttribute('aria-label', this.ariaLabel);
     }
@@ -130,9 +316,8 @@ export class SliderThumbComponent implements OnInit, OnDestroy {
       #rangeElement
       class="absolute h-full bg-primary transition-all"
       [ngStyle]="calculateRangeStyle()"
-      [class.opacity-50]="disabled"
       role="presentation"
-      [attr.aria-hidden]="true"
+      aria-hidden="true"
     ></div>
   `,
 })
@@ -140,47 +325,82 @@ export class SliderRangeComponent implements OnInit, OnDestroy {
   @Input() left = 0;
   @Input() width = 0;
   @Input() disabled = false;
+
   @ViewChild('rangeElement') rangeElement!: ElementRef<HTMLDivElement>;
 
   private animationState: 'idle' | 'moving' = 'idle';
-  private readonly transitionDuration = 150;
+  private readonly transitionDuration = 300; // Changed to 300ms as requested
   private animationTimeout?: number;
 
   calculateRangeStyle(): { [key: string]: string } {
+    const { validLeft, validWidth } = this.validateRangePosition(
+      this.left,
+      this.width
+    );
+
     return {
-      left: `${this.left}%`,
-      width: `${this.width}%`,
+      left: `${validLeft}%`,
+      width: `${validWidth}%`,
       transition: this.getTransitionStyle(),
-      pointerEvents: this.disabled ? 'none' : 'auto',
+      opacity: this.disabled ? '0.5' : '1',
     };
+  }
+
+  private validateRangePosition(
+    left: number,
+    width: number
+  ): { validLeft: number; validWidth: number } {
+    // Ensure values are numbers and within bounds
+    const validLeft = Math.max(0, Math.min(100, isNaN(left) ? 0 : left));
+    const validWidth = Math.max(
+      0,
+      Math.min(100 - validLeft, isNaN(width) ? 0 : width)
+    );
+
+    return { validLeft, validWidth };
   }
 
   private getTransitionStyle(): string {
     if (this.animationState === 'moving') {
-      this.animationTimeout = window.setTimeout(() => {
-        this.animationState = 'idle';
-      }, this.transitionDuration);
+      return 'none';
     }
-    return this.animationState === 'idle'
-      ? 'none'
-      : `left ${this.transitionDuration}ms ease, width ${this.transitionDuration}ms ease`;
+    return `all ${this.transitionDuration}ms ease-out`;
+  }
+
+  updateRangePosition(newLeft: number, newWidth: number): void {
+    // Clear any existing animation timeout
+    if (this.animationTimeout) {
+      window.clearTimeout(this.animationTimeout);
+    }
+
+    // Set to moving state to disable transitions
+    this.animationState = 'moving';
+
+    // Update position
+    this.left = newLeft;
+    this.width = newWidth;
+
+    // Schedule return to idle state
+    this.animationTimeout = window.setTimeout(() => {
+      this.animationState = 'idle';
+    }, 50); // Short delay to ensure smooth movement
   }
 
   ngOnInit(): void {
-    this.updateAriaAttributes();
+    // Initial validation
+    const { validLeft, validWidth } = this.validateRangePosition(
+      this.left,
+      this.width
+    );
+    this.left = validLeft;
+    this.width = validWidth;
   }
 
   ngOnDestroy(): void {
+    // Clean up any pending animation timeouts
     if (this.animationTimeout) {
-      clearTimeout(this.animationTimeout);
+      window.clearTimeout(this.animationTimeout);
     }
-  }
-
-  private updateAriaAttributes(): void {
-    if (!this.rangeElement?.nativeElement) return;
-    const element = this.rangeElement.nativeElement;
-    element.setAttribute('role', 'presentation');
-    element.setAttribute('aria-hidden', 'true');
   }
 }
 
@@ -192,23 +412,135 @@ export class SliderRangeComponent implements OnInit, OnDestroy {
     <div
       #trackElement
       class="relative h-1 w-full rounded-full bg-gray-200"
+      [class.opacity-50]="disabled"
+      [class.cursor-pointer]="!disabled"
       (click)="onClick($event)"
+      (mousedown)="onMouseDown($event)"
+      role="presentation"
+      aria-hidden="true"
     >
       <ng-content></ng-content>
     </div>
   `,
 })
-export class SliderTrackComponent {
+export class SliderTrackComponent implements OnInit, OnDestroy {
+  @Input() disabled = false;
   @Output() trackClick = new EventEmitter<{
     position: number;
     thumbIndex: number;
   }>();
+  @Output() trackDrag = new EventEmitter<{ position: number }>();
+  @Output() trackDragEnd = new EventEmitter<void>();
+
   @ViewChild('trackElement') trackElement!: ElementRef<HTMLDivElement>;
 
+  private isDragging = false;
+  private boundMouseMove: (e: MouseEvent) => void;
+  private boundMouseUp: () => void;
+  private resizeObserver: ResizeObserver | null = null;
+
+  constructor() {
+    this.boundMouseMove = this.onMouseMove.bind(this);
+    this.boundMouseUp = this.onMouseUp.bind(this);
+  }
+
   onClick(event: MouseEvent): void {
+    if (this.disabled) return;
+
+    const position = this.calculatePosition(event);
+    // Find nearest thumb
+    this.trackClick.emit({
+      position,
+      thumbIndex: 0, // Default to first thumb
+    });
+  }
+
+  onMouseDown(event: MouseEvent): void {
+    if (this.disabled || event.button !== 0) return;
+    event.preventDefault();
+
+    this.startDragging();
+    document.addEventListener('mousemove', this.boundMouseMove);
+    document.addEventListener('mouseup', this.boundMouseUp);
+
+    const position = this.calculatePosition(event);
+    this.trackDrag.emit({ position });
+  }
+
+  private onMouseMove(event: MouseEvent): void {
+    if (!this.isDragging) return;
+    event.preventDefault();
+
+    if (event.buttons === 0) {
+      this.onMouseUp();
+      return;
+    }
+
+    const position = this.calculatePosition(event);
+    this.trackDrag.emit({ position });
+  }
+
+  private onMouseUp(): void {
+    this.stopDragging();
+    document.removeEventListener('mousemove', this.boundMouseMove);
+    document.removeEventListener('mouseup', this.boundMouseUp);
+    this.trackDragEnd.emit();
+  }
+
+  private calculatePosition(event: MouseEvent): number {
     const rect = this.trackElement.nativeElement.getBoundingClientRect();
-    const position = ((event.clientX - rect.left) / rect.width) * 100;
-    this.trackClick.emit({ position, thumbIndex: 0 });
+    return Math.max(
+      0,
+      Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)
+    );
+  }
+
+  private startDragging(): void {
+    if (this.isDragging) return;
+
+    this.isDragging = true;
+    document.body.style.userSelect = 'none';
+    this.setupResizeObserver();
+  }
+
+  private stopDragging(): void {
+    if (!this.isDragging) return;
+
+    this.isDragging = false;
+    document.body.style.userSelect = '';
+    this.cleanupResizeObserver();
+  }
+
+  private setupResizeObserver(): void {
+    if (!this.trackElement?.nativeElement) return;
+
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.isDragging) {
+        this.stopDragging();
+      }
+    });
+
+    this.resizeObserver.observe(this.trackElement.nativeElement);
+  }
+
+  private cleanupResizeObserver(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+  }
+
+  ngOnInit(): void {
+    // Initial setup if needed
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupResizeObserver();
+    if (this.isDragging) {
+      document.removeEventListener('mousemove', this.boundMouseMove);
+      document.removeEventListener('mouseup', this.boundMouseUp);
+      this.stopDragging();
+    }
   }
 }
 
@@ -241,6 +573,7 @@ export class SliderTrackComponent {
 export class SliderComponent implements OnInit, OnDestroy {
   @Input() min = 0;
   @Input() max = 100;
+  @Input() step = 1;
   @Output() valuesChange = new EventEmitter<number[]>();
 
   private readonly _values: WritableSignal<number[]> = signal([0, 0]);
@@ -273,7 +606,12 @@ export class SliderComponent implements OnInit, OnDestroy {
     if (!Array.isArray(newValues) || newValues.length !== 2) return;
 
     const validatedValues = newValues.map((value) =>
-      Math.max(this.min, Math.min(this.max, value))
+      this.valueConversion.snapToStep(
+        Math.max(this.min, Math.min(this.max, value)),
+        this.min,
+        this.max,
+        this.step
+      )
     );
 
     if (validatedValues[0] > validatedValues[1]) {
@@ -302,9 +640,14 @@ export class SliderComponent implements OnInit, OnDestroy {
 
     this._positions.set(newPositions);
 
-    // Update actual values
+    // Update actual values with step
     const newValues = newPositions.map((pos) =>
-      this.valueConversion.convertFromPercentage(pos, this.min, this.max)
+      this.valueConversion.convertFromPercentage(
+        pos,
+        this.min,
+        this.max,
+        this.step
+      )
     );
     this._values.set(newValues);
     this.emitValues();
@@ -357,16 +700,11 @@ export class SliderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.setupEventListeners();
+    // Initial setup if needed
   }
 
   ngOnDestroy(): void {
     this.removeEventListeners();
-  }
-
-  private setupEventListeners(): void {
-    this.mouseMoveListener = (e: MouseEvent) => this.onMouseMove(e);
-    this.mouseUpListener = () => this.onMouseUp();
   }
 
   private removeEventListeners(): void {
