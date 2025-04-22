@@ -150,16 +150,23 @@
           </li>
         </ul>
 
-        <div *ngIf="isCustomPrice()" class="mt-4">
+        <div
+          *ngIf="isCustomPrice()"
+          class="mt-4"
+          role="group"
+          aria-label="Custom price range"
+        >
           <div class="flex justify-between items-center mb-2">
-            <span>£{{ priceMin() }}</span>
-            <span>£{{ priceMax() }}</span>
+            <span aria-label="Minimum price">£{{ priceMin().toFixed(2) }}</span>
+            <span aria-label="Maximum price">£{{ priceMax().toFixed(2) }}</span>
           </div>
           <app-slider
             [min]="rangeMin"
             [max]="rangeMax"
-            [values]="[filter().price.range[0], filter().price.range[1]]"
+            [step]="sliderStep"
+            [values]="getCurrentPriceRange()"
             (valuesChange)="onSliderChange($event)"
+            aria-label="Price range slider"
           ></app-slider>
         </div>
       </AccordionContent>

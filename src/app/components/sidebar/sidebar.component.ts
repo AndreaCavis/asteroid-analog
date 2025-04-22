@@ -64,6 +64,11 @@ export class SidebarComponent {
     return this.filter().price.range[1];
   }
 
+  getCurrentPriceRange(): [number, number] {
+    const range = this.filter().price.range;
+    return [range[0], range[1]] as [number, number];
+  }
+
   onActiveIndexChange(event: string | string[]) {
     this.activeIndex = Array.isArray(event) ? event : [event];
   }
@@ -112,5 +117,6 @@ export class SidebarComponent {
         range: values,
       },
     });
+    this.filters.debouncedRefetch();
   }
 }

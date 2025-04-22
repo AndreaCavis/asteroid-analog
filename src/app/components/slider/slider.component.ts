@@ -49,11 +49,13 @@ export class ValueConversionService {
   template: `
     <div
       #thumb
-      class="absolute top-1/2 -translate-y-1/2 transform block h-4 w-4 rounded-full border-2 border-primary bg-background transition-all duration-300 ease-out disabled:pointer-events-none disabled:opacity-50"
-      [ngStyle]="getPositionStyle()"
-      [class]="getCursorClass()"
-      [class.scale-110]="isHovered || isDragging"
-      [class.border-primary-dark]="isDragging"
+      [class]="
+        'absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 block h-4 w-4 rounded-full border-2 border-primary bg-background transition-all duration-300 ease-out ' +
+        (disabled ? 'pointer-events-none opacity-50 ' : '') +
+        (isDragging ? 'cursor-grabbing border-primary-dark ' : 'cursor-grab ') +
+        (isHovered || isDragging ? 'scale-110' : '')
+      "
+      [style.left]="position + '%'"
       role="slider"
       [attr.aria-label]="ariaLabel"
       [attr.aria-valuenow]="value"
@@ -314,8 +316,12 @@ export class SliderThumbComponent implements OnInit, OnDestroy {
   template: `
     <div
       #rangeElement
-      class="absolute h-full bg-primary transition-all"
-      [ngStyle]="calculateRangeStyle()"
+      [class]="
+        'absolute h-full bg-primary transition-all duration-300 ease-out ' +
+        (disabled ? 'opacity-50' : '')
+      "
+      [style.left]="left + '%'"
+      [style.width]="width + '%'"
       role="presentation"
       aria-hidden="true"
     ></div>
@@ -364,7 +370,7 @@ export class SliderRangeComponent implements OnInit, OnDestroy {
     if (this.animationState === 'moving') {
       return 'none';
     }
-    return `all ${this.transitionDuration}ms ease-out`;
+    return `all duration-${this.transitionDuration} ease-out`;
   }
 
   updateRangePosition(newLeft: number, newWidth: number): void {
@@ -554,7 +560,7 @@ export class SliderTrackComponent implements OnInit, OnDestroy {
     SliderThumbComponent,
   ],
   template: `
-    <div class="relative w-full">
+    <div class="relative w-full" #track>
       <app-slider-track (trackClick)="onTrackClick($event)">
         <app-slider-range
           [left]="rangePosition().left"
@@ -563,7 +569,10 @@ export class SliderTrackComponent implements OnInit, OnDestroy {
         <ng-container *ngFor="let value of currentValues(); let i = index">
           <app-slider-thumb
             [position]="thumbPositions()[i]"
-            (mousedown)="onThumbMouseDown($event, i)"
+            [value]="value"
+            [ariaLabel]="'Slider thumb ' + (i + 1)"
+            (thumbMove)="onThumbMove($event, i)"
+            (dragEnd)="onThumbDragEnd()"
           ></app-slider-thumb>
         </ng-container>
       </app-slider-track>
@@ -574,10 +583,12 @@ export class SliderComponent implements OnInit, OnDestroy {
   @Input() min = 0;
   @Input() max = 100;
   @Input() step = 1;
-  @Output() valuesChange = new EventEmitter<number[]>();
+  @Output() valuesChange = new EventEmitter<[number, number]>();
 
-  private readonly _values: WritableSignal<number[]> = signal([0, 0]);
-  private readonly _positions: WritableSignal<number[]> = signal([0, 0]);
+  private readonly _values: WritableSignal<[number, number]> = signal([0, 0]);
+  private readonly _positions: WritableSignal<[number, number]> = signal([
+    0, 0,
+  ]);
 
   protected readonly currentValues = computed(() => this._values());
   protected readonly thumbPositions = computed(() => this._positions());
@@ -589,6 +600,8 @@ export class SliderComponent implements OnInit, OnDestroy {
   private activeThumbIndex: number | null = null;
   private mouseMoveListener: ((e: MouseEvent) => void) | null = null;
   private mouseUpListener: (() => void) | null = null;
+  private animationFrameId: number | null = null;
+  private lastMouseEvent: MouseEvent | null = null;
 
   @ViewChild('track') trackElement!: ElementRef<HTMLElement>;
 
@@ -598,7 +611,7 @@ export class SliderComponent implements OnInit, OnDestroy {
       const newPositions = newValues.map((value) =>
         this.valueConversion.convertToPercentage(value, this.min, this.max)
       );
-      this._positions.set(newPositions);
+      this._positions.set([newPositions[0], newPositions[1]]);
     });
   }
 
@@ -621,7 +634,7 @@ export class SliderComponent implements OnInit, OnDestroy {
       ];
     }
 
-    this._values.set(validatedValues);
+    this._values.set([validatedValues[0], validatedValues[1]]);
   }
 
   private updateThumbPosition(index: number, position: number): void {
@@ -632,13 +645,13 @@ export class SliderComponent implements OnInit, OnDestroy {
     newPositions[index] = Math.max(0, Math.min(100, position));
 
     // Ensure thumbs don't cross
-    if (index === 0 && newPositions[0] >= newPositions[1]) {
+    if (index === 0 && newPositions[0] > newPositions[1]) {
       newPositions[0] = newPositions[1];
-    } else if (index === 1 && newPositions[1] <= newPositions[0]) {
+    } else if (index === 1 && newPositions[1] < newPositions[0]) {
       newPositions[1] = newPositions[0];
     }
 
-    this._positions.set(newPositions);
+    this._positions.set([newPositions[0], newPositions[1]] as [number, number]);
 
     // Update actual values with step
     const newValues = newPositions.map((pos) =>
@@ -649,61 +662,56 @@ export class SliderComponent implements OnInit, OnDestroy {
         this.step
       )
     );
-    this._values.set(newValues);
+    this._values.set([newValues[0], newValues[1]] as [number, number]);
     this.emitValues();
+  }
+
+  onThumbMove(event: { clientX: number }, index: number): void {
+    if (this.trackElement) {
+      const trackRect = this.trackElement.nativeElement.getBoundingClientRect();
+      const position = Math.max(
+        0,
+        Math.min(
+          100,
+          ((event.clientX - trackRect.left) / trackRect.width) * 100
+        )
+      );
+      this.updateThumbPosition(index, position);
+    }
+  }
+
+  onThumbDragEnd(): void {
+    this.activeThumbIndex = null;
   }
 
   onTrackClick(event: { position: number; thumbIndex: number }): void {
     const { position, thumbIndex } = event;
-    if (this.canMoveThumb(position, thumbIndex)) {
-      this.updateThumbPosition(thumbIndex, position);
-    }
+    const index = this.getClosestThumbIndex(position);
+    this.updateThumbPosition(index, position);
   }
 
-  onThumbMouseDown(event: MouseEvent, index: number): void {
-    event.preventDefault();
-    this.activeThumbIndex = index;
-
-    this.mouseMoveListener = (e: MouseEvent) => this.onMouseMove(e);
-    this.mouseUpListener = () => this.onMouseUp();
-
-    document.addEventListener('mousemove', this.mouseMoveListener);
-    document.addEventListener('mouseup', this.mouseUpListener);
-  }
-
-  private onMouseMove(event: MouseEvent): void {
-    if (this.activeThumbIndex === null) return;
-
-    const trackRect = this.trackElement.nativeElement.getBoundingClientRect();
-    const position = Math.max(
-      0,
-      Math.min(100, ((event.clientX - trackRect.left) / trackRect.width) * 100)
-    );
-
-    if (this.canMoveThumb(position, this.activeThumbIndex)) {
-      this.updateThumbPosition(this.activeThumbIndex, position);
-    }
-  }
-
-  private onMouseUp(): void {
-    this.activeThumbIndex = null;
-    this.removeEventListeners();
-  }
-
-  private canMoveThumb(position: number, index: number): boolean {
+  private getClosestThumbIndex(position: number): number {
     const positions = this._positions();
-    return index === 0 ? position < positions[1] : position > positions[0];
+    const distanceToFirst = Math.abs(positions[0] - position);
+    const distanceToSecond = Math.abs(positions[1] - position);
+    return distanceToFirst <= distanceToSecond ? 0 : 1;
   }
 
   private emitValues(): void {
-    this.valuesChange.emit([...this._values()]);
+    this.valuesChange.emit([this._values()[0], this._values()[1]]);
   }
 
   ngOnInit(): void {
-    // Initial setup if needed
+    // Ensure initial values are set
+    if (this._values()[0] === 0 && this._values()[1] === 0) {
+      this._values.set([this.min, this.max]);
+    }
   }
 
   ngOnDestroy(): void {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
     this.removeEventListeners();
   }
 
