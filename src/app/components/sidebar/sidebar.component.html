@@ -116,7 +116,9 @@
               [id]="'price-' + option.value.join('-')"
               [name]="'price'"
               [checked]="
-                !isCustomPrice() && filter().price.range[0] === option.value[0]
+                !isCustomPrice() &&
+                filter().price.range[0] === option.value[0] &&
+                filter().price.range[1] === option.value[1]
               "
               (change)="selectPresetPrice(option.value)"
             />
@@ -170,12 +172,12 @@
 
             <div>
               £<span aria-label="Minimum price" class="text-primary">{{
-                priceMin().toFixed(2)
+                priceMin().toFixed(0)
               }}</span
               >{{ " " }}- £<span
                 aria-label="Maximum price"
                 class="text-primary"
-                >{{ priceMax().toFixed(2) }}</span
+                >{{ priceMax().toFixed(0) }}</span
               >
             </div>
           </div>
