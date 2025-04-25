@@ -12,6 +12,7 @@ import {
   computed,
   effect,
   WritableSignal,
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -96,13 +97,50 @@ export class SliderThumbComponent implements OnInit, OnDestroy {
     }
   }
 
-  @Output() thumbMove = new EventEmitter<{ clientX: number }>();
+  // @Output() thumbMove = new EventEmitter<{ clientX: number }>();
+  @Output() positionChange = new EventEmitter<number>();
   @Output() dragEnd = new EventEmitter<void>();
   @Output() valueChange = new EventEmitter<number>();
 
   @ViewChild('thumb') thumbElement!: ElementRef<HTMLDivElement>;
 
   protected isHovered = false;
+  private dragging = false;
+
+  @HostListener('pointerdown', ['$event'])
+  onPointerDown(event: PointerEvent): void {
+    if (this.disabled) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.dragging = true;
+    document.addEventListener('pointermove', this.onPointerMove);
+    document.addEventListener('pointerup', this.onPointerUp);
+  }
+
+  onPointerMove = (event: PointerEvent): void => {
+    if (!this.dragging) return;
+    event.preventDefault();
+    const newPosition = this.calculatePosition(event);
+    this.positionChange.emit(newPosition);
+  };
+
+  onPointerUp = (): void => {
+    if (!this.dragging) return;
+    this.dragging = false;
+    document.removeEventListener('pointermove', this.onPointerMove);
+    document.removeEventListener('pointerup', this.onPointerUp);
+    this.dragEnd.emit();
+  };
+
+  private calculatePosition(event: PointerEvent): number {
+    const rect =
+      this.thumbElement.nativeElement.parentElement?.getBoundingClientRect();
+    if (!rect) return this.position;
+
+    const newPosition = ((event.clientX - rect.left) / rect.width) * 100;
+    return Math.max(0, Math.min(100, newPosition));
+  }
 
   constructor() {}
 
@@ -112,7 +150,8 @@ export class SliderThumbComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.thumbMove.complete();
+    // this.thumbMove.complete();
+    this.positionChange.complete();
     this.dragEnd.complete();
     this.valueChange.complete();
   }
@@ -219,7 +258,7 @@ export class SliderTrackComponent {
             [position]="thumbPositions()[i]"
             [value]="value"
             [ariaLabel]="'Slider thumb ' + (i + 1)"
-            (thumbMove)="onThumbMove($event, i)"
+            (positionChange)="onThumbPositionChange($event, i)"
             (dragEnd)="dragEnd.emit()"
           ></app-slider-thumb>
         </ng-container>
@@ -280,15 +319,8 @@ export class SliderComponent implements OnInit {
     this._values.set([validatedValues[0], validatedValues[1]]);
   }
 
-  onThumbMove(event: { clientX: number }, index: number): void {
+  onThumbPositionChange(position: number, index: number): void {
     if (!this.trackElement) return;
-
-    const trackRect = this.trackElement.nativeElement.getBoundingClientRect();
-    const position = Math.max(
-      0,
-      Math.min(100, ((event.clientX - trackRect.left) / trackRect.width) * 100)
-    );
-
     this.updateThumbPosition(index, position);
   }
 
