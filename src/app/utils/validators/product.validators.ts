@@ -18,7 +18,7 @@ export const AVAILABLE_BRANDS = [
 export const AVAILABLE_SORT = ['none', 'price-asc', 'price-desc'] as const;
 
 export const ProductValidator = z.object({
-  _id: z.custom<ObjectId>((val) => val instanceof ObjectId),
+  _id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid document ID'),
   id: z.string(),
   imageUrl: z
     .string()
