@@ -8,27 +8,31 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   selector: 'app-not-found',
   template: `
-    <main class="flex flex-col items-center text-center py-12 px-4">
+    <main class="flex mx-auto flex-col items-center pt-4">
       <h1
-        class="text-6xl md:text-8xl font-bold text-primary hover:scale-110 transition-transform duration-300 ease-in"
+        class="lg:text-8xl md:text-6xl sm:text-4xl text-2xl font-bold mb-6 hover:scale-110 duration-300 ease-in text-primary"
       >
         404
       </h1>
-      <h2 class="mt-4 text-lg md:text-xl text-muted">
+      <h2
+        class="lg:text-4xl md:text-2xl sm:text-lg text-base text-accent-foreground font-normal mb-4 text-center"
+      >
         Sorry, an asteroid destroyed this page. It can't be found anymore :{{
           '('
         }}
       </h2>
       <a
         routerLink="/"
-        class="mt-6 inline-block underline text-blue-500 hover:text-blue-700"
+        class="lg:text-4xl md:text-2xl sm:text-lg text-base underlined"
       >
-        Return to Homepage
+        Return to Home
       </a>
       <img
         src="/asteroid-icon-pink.png"
-        alt="Asteroid"
-        class="mt-8 h-48 w-48 md:h-64 md:w-64 object-contain"
+        alt="Asteroid picture"
+        width="256"
+        height="256"
+        class="lg:h-64 md:h-56 sm:h-52 h-48 lg:w-64 md:w-56 sm:w-52 w-48 hover:animate-ping mt-8"
       />
     </main>
   `,
