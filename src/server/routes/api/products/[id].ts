@@ -6,6 +6,8 @@ import {
   setResponseHeader,
 } from 'h3';
 import { connectToDB } from '../../../utils/mongoDB';
+import { Collection } from 'mongodb';
+import { Product } from 'src/app/utils/validators/product.validators';
 
 export default defineEventHandler(async (event) => {
   const productID = getRouterParam(event, 'id');
@@ -20,7 +22,8 @@ export default defineEventHandler(async (event) => {
   try {
     const { db } = await connectToDB();
 
-    const product = await db.collection('products').findOne({ id: productID });
+    const productsCollection = db.collection('products') as Collection<Product>;
+    const product = await productsCollection.findOne({ id: productID });
 
     if (!product) {
       throw createError({

@@ -6,31 +6,42 @@ import {
   setResponseHeader,
 } from 'h3';
 import { connectToDB } from '../../utils/mongoDB';
-import { ProductFilterValidator } from '../../../app/utils/validators/product.validators';
+import {
+  Product,
+  ProductFilterValidator,
+} from '../../../app/utils/validators/product.validators';
+import { Collection, Filter } from 'mongodb';
 
 export default defineEventHandler(async (event) => {
   try {
     // 1. Read and destructure body
     const body = await readBody(event);
-    const { filter, searchQuery } = body;
+    const { searchQuery } = body;
 
     // 2. Validate filters using Zod
-    const { type, brand, price, sort } = ProductFilterValidator.parse(filter);
+    const { type, brand, sort } = ProductFilterValidator.parse(body.filter);
 
     // 3. Bail early if no filters are selected
     if (type.length === 0 || brand.length === 0) {
-      return [];
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
 
+    const mongoFilter: Filter<Product> = {};
+
     // 4. Build MongoDB filter
-    const mongoFilter: Record<string, any> = {
-      type: { $in: type },
-      brand: { $in: brand },
-      price: {
-        $gte: price[0],
-        $lte: price[1],
-      },
-    };
+    // const mongoFilter: Record<string, any> = {
+    //   type: { $in: type },
+    //   brand: { $in: brand },
+    //   price: {
+    //     $gte: price[0],
+    //     $lte: price[1],
+    //   },
+    // };
 
     // Add fuzzy search if provided
     if (
@@ -50,8 +61,9 @@ export default defineEventHandler(async (event) => {
 
     // ⚡ 6. Query DB
     const { db } = await connectToDB();
-    const products = await db
-      .collection('products')
+    const productsCollection = db.collection('products') as Collection<Product>;
+
+    const products = await productsCollection
       .find(mongoFilter)
       .sort(sortOption)
       .limit(25)
