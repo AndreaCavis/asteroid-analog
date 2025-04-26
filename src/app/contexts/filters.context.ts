@@ -11,10 +11,9 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Injector } from '@angular/core';
 import { filter as rxFilter } from 'rxjs/operators';
 
-import {
+import type {
   Product,
   ProductState,
-  ProductValidator,
 } from '../utils/validators/product.validators';
 
 // 🔁 UI FILTER METADATA (from React)
@@ -196,21 +195,22 @@ export class FiltersContext {
     };
 
     try {
+      // Use absolute URL instead of relative URL
       const res = await fetch('http://localhost:5173/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`API error ${res.status}: ${text}`);
+      }
+
       const data = await res.json();
+      this.products.set(data);
 
       if (!Array.isArray(data)) throw new Error('Invalid response');
-
-      const valid = data.filter(
-        (item) => ProductValidator.safeParse(item).success
-      );
-
-      this.products.set(valid);
     } catch (err) {
       console.error('Failed to fetch products:', err);
       this.products.set([]);

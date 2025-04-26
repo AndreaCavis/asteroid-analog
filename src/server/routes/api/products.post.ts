@@ -31,7 +31,10 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const mongoFilter: Filter<Product> = {};
+    const mongoFilter: Filter<Product> = {
+      type: { $in: type },
+      brand: { $in: brand },
+    };
 
     // 4. Build MongoDB filter
     // const mongoFilter: Record<string, any> = {
