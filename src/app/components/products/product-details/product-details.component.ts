@@ -13,7 +13,7 @@ import { Product } from 'src/app/utils/validators/product.validators';
       <div class="flex">
         <button
           (click)="goBack()"
-          class="transition-all duration-300 mt-4 mr-auto ml-12 text-accent-foreground hover:text-primary lg:text-4xl md:text-3xl sm:text-2xl text-xl"
+          class="transition-all duration-300 my-4 mr-auto ml-12 text-accent-foreground hover:text-primary lg:text-4xl md:text-3xl sm:text-2xl text-xl"
         >
           <i class="pi pi-arrow-left"></i>
         </button>
@@ -21,7 +21,7 @@ import { Product } from 'src/app/utils/validators/product.validators';
 
       <!-- Product Layout -->
       <div
-        class="container mx-auto p-8 flex flex-col lg:flex-row items-center lg:items-start"
+        class="container flex flex-col mx-auto mt-0 lg:flex-row items-center lg:items-center"
       >
         <!-- Image -->
         <div class="lg:w-1/2 w-full flex justify-center lg:pr-8">
