@@ -1,6 +1,6 @@
 // src/app/utils/validators/product.validators.ts
-
 import { z } from 'zod';
+import { ObjectId } from 'mongodb';
 
 export const AVAILABLE_TYPES = [
   'bcaa',
@@ -18,6 +18,7 @@ export const AVAILABLE_BRANDS = [
 export const AVAILABLE_SORT = ['none', 'price-asc', 'price-desc'] as const;
 
 export const ProductValidator = z.object({
+  _id: z.custom<ObjectId>((val) => val instanceof ObjectId),
   id: z.string(),
   imageUrl: z
     .string()
