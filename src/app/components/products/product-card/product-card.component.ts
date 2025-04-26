@@ -11,7 +11,7 @@ import { Product } from '../../../utils/validators/product.validators';
   imports: [CommonModule, RouterLink],
   template: `
     <a
-      [routerLink]="['/products/' + product.id]"
+      [routerLink]="['/products', product.id]"
       class="group bg-none rounded-md w-52"
     >
       @if (product.imageUrl) {
