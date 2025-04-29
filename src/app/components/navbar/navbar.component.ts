@@ -17,7 +17,7 @@ import { RouterLink } from '@angular/router';
           alt="Asteroid logo"
           width="334"
           height="100"
-          class="w-1/6 h-auto m-2 inline-block duration-200 hover:animate-pulse"
+          class="w-1/6 h-auto m-2 inline-block duration-200 hover:animate-pulse hover:duration-1000"
         />
       </a>
     </nav>
