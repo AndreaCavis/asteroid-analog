@@ -192,7 +192,9 @@ export class SearchbarComponent implements OnInit {
   private async fetchProductNames() {
     this.isLoading.set(true);
     try {
-      const res = await fetch('http://localhost:5173/api/query?search=');
+      const res = await fetch(
+        process.env.ANALOG_PUBLIC_SITE_URL + 'api/query?search='
+      );
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }

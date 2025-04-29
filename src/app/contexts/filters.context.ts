@@ -196,11 +196,14 @@ export class FiltersContext {
 
     try {
       // Use absolute URL instead of relative URL
-      const res = await fetch('http://localhost:5173/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        process.env.ANALOG_PUBLIC_SITE_URL + 'api/products',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!res.ok) {
         const text = await res.text();
