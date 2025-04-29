@@ -8,8 +8,8 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <nav
-      class="navbar max-h-24 backdrop-blur-sm bg-gradient-to-b from-black/60 via-black/40 to-black/60
-     hover:bg-black/90 transition-all duration-200"
+      class="navbar max-h-24 backdrop-blur-3xl bg-gradient-to-b from-black/0 via-black/0 to-black/0
+     hover:bg-black/50 transition-all duration-200"
     >
       <a routerLink="/">
         <img
