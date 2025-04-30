@@ -2,7 +2,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from 'src/app/utils/validators/product.validators';
-
 @Component({
   selector: 'app-product-details',
   standalone: true,
