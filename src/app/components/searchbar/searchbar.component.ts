@@ -193,7 +193,7 @@ export class SearchbarComponent implements OnInit {
     this.isLoading.set(true);
     try {
       const res = await fetch(
-        process.env.ANALOG_PUBLIC_SITE_URL + 'api/query?search='
+        import.meta.env['VITE_ANALOG_PUBLIC_SITE_URL'] + 'api/query?search='
       );
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);

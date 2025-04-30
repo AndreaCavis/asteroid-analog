@@ -1,15 +1,7 @@
-/* PrimeNG */
-@import "primeicons/primeicons.css";
-
 /* Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@plugin "tailwindcss-primeui";
-
-/* Angular Material */
-@use "@angular/material" as mat;
-@include mat.core();
 
 @layer base {
   :root {

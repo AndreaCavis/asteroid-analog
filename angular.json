@@ -16,11 +16,7 @@
             "main": "src/main.ts",
             "outputPath": "dist/client",
             "tsConfig": "tsconfig.app.json",
-            "styles": [
-              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
-              "node_modules/primeng/resources/primeng.css",
-              "src/styles.css"
-            ]
+            "styles": ["src/styles.css"]
           },
           "defaultConfiguration": "production",
           "configurations": {
