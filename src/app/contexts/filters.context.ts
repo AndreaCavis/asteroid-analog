@@ -196,14 +196,11 @@ export class FiltersContext {
 
     try {
       // Use absolute URL instead of relative URL
-      const res = await fetch(
-        'https://asteroid-analog.vercel.app/api/products',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch('api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
       if (!res.ok) {
         const text = await res.text();

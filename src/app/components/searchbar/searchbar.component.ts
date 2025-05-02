@@ -192,9 +192,7 @@ export class SearchbarComponent implements OnInit {
   private async fetchProductNames() {
     this.isLoading.set(true);
     try {
-      const res = await fetch(
-        'https://asteroid-analog.vercel.app/api/query?search='
-      );
+      const res = await fetch('api/query?search=');
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
