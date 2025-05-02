@@ -197,7 +197,7 @@ export class FiltersContext {
     try {
       // Use absolute URL instead of relative URL
       const res = await fetch(
-        import.meta.env['VITE_ANALOG_PUBLIC_SITE_URL'] + 'api/products',
+        'https://asteroid-analog.vercel.app/api/products',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

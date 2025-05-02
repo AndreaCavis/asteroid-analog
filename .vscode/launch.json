@@ -7,7 +7,7 @@
       "type": "chrome",
       "request": "launch",
       "preLaunchTask": "npm: start",
-      "url": "http://localhost:5173/"
+      "url": "https://asteroid-analog.vercel.app/"
     },
     {
       "name": "ng test",
