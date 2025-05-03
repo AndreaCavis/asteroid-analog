@@ -12,11 +12,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { debounce } from '../../utils/debounce';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { featherSearch } from '@ng-icons/feather-icons';
 
 @Component({
   selector: 'app-searchbar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgIconComponent],
+  providers: [provideIcons({ featherSearch })],
   template: `
     <div class="flex justify-center w-full">
       <form (submit)="onSubmit($event)" class="flex-none relative w-full">
@@ -38,16 +41,16 @@ import { debounce } from '../../utils/debounce';
 
         <!-- Search Icon -->
         <button
-          class="absolute right-0 top-1/2 -translate-y-1/2 p-3 rounded-full"
+          class="absolute top-0 right-0 h-full flex items-center justify-center px-3 rounded-full"
           (click)="onSubmit($event)"
           aria-label="Search supplements"
         >
-          <i
-            class="pi pi-search absolute right-0 top-1/2 -translate-y-1/2 p-3 rounded-full
-                   transition-all duration-300
-                   text-xl font-bold text-primary opacity-75
+          <ng-icon
+            name="featherSearch"
+            class="transition-all duration-300
+                   text-2xl font-bold text-primary opacity-75
                    hover:opacity-100 "
-          ></i>
+          ></ng-icon>
         </button>
 
         <!-- Suggestions Dropdown -->

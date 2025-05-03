@@ -2,10 +2,14 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from 'src/app/utils/validators/product.validators';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { featherArrowLeft } from '@ng-icons/feather-icons';
+
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgIconComponent],
+  providers: [provideIcons({ featherArrowLeft })],
   template: `
     <main>
       <!-- Back Button -->
@@ -14,7 +18,7 @@ import { Product } from 'src/app/utils/validators/product.validators';
           (click)="goBack()"
           class="transition-all duration-300 my-4 mr-auto ml-12 text-accent-foreground hover:text-primary lg:text-4xl md:text-3xl sm:text-2xl text-xl"
         >
-          <i class="pi pi-arrow-left"></i>
+          <ng-icon name="featherArrowLeft"></ng-icon>
         </button>
       </div>
 
