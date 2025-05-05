@@ -1,6 +1,5 @@
 // src/app/utils/validators/product.validators.ts
 import { z } from 'zod';
-import { ObjectId } from 'mongodb';
 
 export const AVAILABLE_TYPES = [
   'bcaa',
