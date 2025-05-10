@@ -154,11 +154,8 @@
           </li>
         </ul>
 
-        <div
-          *ngIf="isCustomPrice()"
-          role="group"
-          aria-label="Custom price range"
-        >
+        @if (isCustomPrice()) {
+        <div role="group" aria-label="Custom price range">
           <div
             class="flex justify-between pb-4 text-accent-foreground font-medium lg:text-base md:text-sm sm:text-xs text-xs"
           >
@@ -192,6 +189,7 @@
             aria-label="Price range slider"
           ></app-slider>
         </div>
+        }
       </AccordionContent>
     </AccordionItem>
   </Accordion>

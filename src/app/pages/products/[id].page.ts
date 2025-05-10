@@ -22,21 +22,13 @@ import NotFoundPage from '../[...not-found].page';
     NotFoundPage,
   ],
   template: `
-    <!-- 🧱 Error state -->
-    <ng-container *ngIf="error(); else loadingOrLoaded">
-      <app-not-found />
-    </ng-container>
-
-    <!-- 💾 Skeleton or Details -->
-    <ng-template #loadingOrLoaded>
-      <ng-container *ngIf="product() as resolvedProduct; else loading">
-        <app-product-details [product]="resolvedProduct" />
-      </ng-container>
-
-      <ng-template #loading>
-        <app-product-details-skeleton />
-      </ng-template>
-    </ng-template>
+    @if (error()) {
+    <app-not-found />
+    } @else { @if (product(); as resolvedProduct) {
+    <app-product-details [product]="resolvedProduct" />
+    } @else {
+    <app-product-details-skeleton />
+    } }
   `,
 })
 export default class ProductDetailsPage {
