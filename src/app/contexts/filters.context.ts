@@ -6,7 +6,9 @@ import {
   effect,
   inject,
   runInInjectionContext,
+  PLATFORM_ID,
 } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Injector } from '@angular/core';
 import { filter as rxFilter } from 'rxjs/operators';
@@ -74,6 +76,8 @@ export const RESET_FILTERS: ProductState = {
 
 @Injectable({ providedIn: 'root' })
 export class FiltersContext {
+  private platformId = inject(PLATFORM_ID);
+
   // 🔁 Reactive state signals
   private filter = signal<ProductState>({ ...RESET_FILTERS });
   private searchQuery = signal('');
@@ -129,7 +133,9 @@ export class FiltersContext {
             this.searchQuery.set(query);
           }
 
-          this.debouncedRefetch();
+          if (!isPlatformServer(this.platformId)) {
+            this.debouncedRefetch();
+          }
         });
     });
 
@@ -152,8 +158,14 @@ export class FiltersContext {
       this._lastFilterString = filterString;
       this._lastSearchString = searchString;
 
-      this.debouncedRefetch();
+      if (!isPlatformServer(this.platformId)) {
+        this.debouncedRefetch();
+      }
     });
+
+    if (isPlatformServer(this.platformId)) {
+      this.fetchProducts();
+    }
 
     // 🔁 Adjust filter options to available values in results
     effect(() => {
@@ -194,18 +206,25 @@ export class FiltersContext {
       searchQuery: query || null,
     };
 
+    let url: string;
+    if (isPlatformServer(this.platformId)) {
+      url = 'api/products';
+    } else {
+      url = 'https://asteroid-analog.vercel.app/api/products';
+    }
+
     try {
-      const res = await fetch(
-        'https://asteroid-analog.vercel.app/api/products',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
       if (!res.ok) {
         const text = await res.text();
+        console.error(
+          `Failed to fetch products from ${url}. Status: ${res.status}, Response: ${text}`
+        );
         throw new Error(`API error ${res.status}: ${text}`);
       }
 
@@ -214,7 +233,7 @@ export class FiltersContext {
 
       if (!Array.isArray(data)) throw new Error('Invalid response');
     } catch (err) {
-      console.error('Failed to fetch products:', err);
+      console.error(`Error fetching products from ${url}:`, err);
       this.products.set([]);
     }
   }

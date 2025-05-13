@@ -7,8 +7,9 @@ import {
   ViewChild,
   ElementRef,
   OnInit,
+  PLATFORM_ID,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformServer } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { debounce } from '../../utils/debounce';
@@ -78,6 +79,7 @@ import { featherSearch } from '@ng-icons/feather-icons';
   `,
 })
 export class SearchbarComponent implements OnInit {
+  private platformId = inject(PLATFORM_ID);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -194,20 +196,32 @@ export class SearchbarComponent implements OnInit {
 
   private async fetchProductNames() {
     this.isLoading.set(true);
-    try {
-      const res = await fetch(
-        'https://asteroid-analog.vercel.app/api/query?search='
-      );
+    let url: string;
 
-      // If a 404 occurs (no products found for the query), treat as empty results.
+    if (isPlatformServer(this.platformId)) {
+      // For server-side (prerendering), use a relative path.
+      url = 'api/query?search='; // No leading slash
+    } else {
+      // For client-side, use the full public URL.
+      url = 'https://asteroid-analog.vercel.app/api/query?search=';
+    }
+
+    try {
+      const res = await fetch(url);
+
       if (res.status === 404) {
         this.allProductNames.set([]);
-        return; // Successfully handled the "no results" case.
+        return;
       }
 
       if (!res.ok) {
-        // For other non-ok statuses, throw an error.
-        throw new Error(`HTTP error! status: ${res.status}`);
+        const errorText = await res.text();
+        console.error(
+          `Failed to fetch product names from ${url}. Status: ${res.status}, Response: ${errorText}`
+        );
+        throw new Error(
+          `HTTP error! status: ${res.status}, message: ${errorText}`
+        );
       }
       const data = await res.json();
 
@@ -231,7 +245,7 @@ export class SearchbarComponent implements OnInit {
         this.allProductNames.set([]);
       }
     } catch (err) {
-      console.error('❌ Failed to fetch product names:', err);
+      console.error(`Error fetching product names from ${url}:`, err);
       this.allProductNames.set([]);
     } finally {
       this.isLoading.set(false);
