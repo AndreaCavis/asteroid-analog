@@ -198,12 +198,22 @@ export class SearchbarComponent implements OnInit {
       const res = await fetch(
         'https://asteroid-analog.vercel.app/api/query?search='
       );
+
+      // If a 404 occurs (no products found for the query), treat as empty results.
+      if (res.status === 404) {
+        this.allProductNames.set([]);
+        return; // Successfully handled the "no results" case.
+      }
+
       if (!res.ok) {
+        // For other non-ok statuses, throw an error.
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
 
       if (Array.isArray(data)) {
+        // This condition is still useful if API returns 200 OK with an empty array for some reason,
+        // or if data[0] is not an object/string as expected below.
         if (data.length === 0) {
           this.allProductNames.set([]);
           return;

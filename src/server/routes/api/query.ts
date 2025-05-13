@@ -28,6 +28,11 @@ export default defineEventHandler(async (event) => {
 
     return products;
   } catch (err: any) {
+    // If the error is the one we created for 404, re-throw it as is.
+    if (err.statusCode === 404) {
+      throw err;
+    }
+    // Otherwise, log and throw a generic 500 error.
     console.error('[GET /api/query] DB error:', err);
     throw createError({
       statusCode: 500,
