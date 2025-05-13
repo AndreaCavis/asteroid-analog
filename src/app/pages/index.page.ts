@@ -39,11 +39,12 @@ import { SearchbarComponent } from '../components/searchbar/searchbar.component'
       <div
         class="m-4 grid gap-x-4 gap-y-8 lg:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] md:grid-cols-3 sm:grid-cols-3 grid-cols-3"
       >
-        @if (showSkeletons()) { @for (s of skeletons; track s) {
+        @if (showSkeletons()) { @for (s of skeletons; track $index) {
         <app-product-card-skeleton />
         } } @else if (!isEmpty()) { @for (product of products(); track
-        product.id) {
+        product._id) {
         <app-product-card [product]="product" />} } @else {
+        <!-- [name] is a variable that shows the searchbar text, leave empty here -->
         <app-empty-state [name]="" class="col-span-full" />
         }
       </div>

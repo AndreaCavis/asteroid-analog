@@ -50,7 +50,7 @@ import { ProductCardSkeletonComponent } from '../components/products/product-car
         <app-product-card-skeleton />
         } }
         <!-- products grid -->
-        @else { @for (product of products(); track product.id) {
+        @else { @for (product of products(); track product._id) {
         <app-product-card [product]="product" />
         } }
       </div>
