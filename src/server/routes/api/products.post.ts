@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
     const products = await productsCollection
       .find(mongoFilter)
       .sort(sortOption)
-      .limit(100)
+      .limit(25)
       .toArray();
 
     // 📤 7. Return results as JSON
