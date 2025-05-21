@@ -36,16 +36,6 @@ export default defineEventHandler(async (event) => {
       brand: { $in: brand },
     };
 
-    // 4. Build MongoDB filter
-    // const mongoFilter: Record<string, any> = {
-    //   type: { $in: type },
-    //   brand: { $in: brand },
-    //   price: {
-    //     $gte: price[0],
-    //     $lte: price[1],
-    //   },
-    // };
-
     // Add fuzzy search if provided
     if (
       searchQuery &&
